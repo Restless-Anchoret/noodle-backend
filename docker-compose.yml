@@ -1,0 +1,16 @@
+version: '3.6'
+services:
+
+  pg:
+    container_name: pg
+    image: "postgres:9.6.5"
+    ports:
+    - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+      POSTGRES_DB: noodle
+
+networks:
+  default:
+    name: noodle-network
