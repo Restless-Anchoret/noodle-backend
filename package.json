@@ -1,0 +1,24 @@
+{
+  "name": "noodle-backend",
+  "version": "0.1.0",
+  "description": "Noodle planning tool backend",
+  "main": "index.js",
+  "scripts": {
+    "run": "node src/index.js",
+    "run-monit": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Restless-Anchoret/noodle-backend.git"
+  },
+  "author": "Ilya Kuznetsov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Restless-Anchoret/noodle-backend/issues"
+  },
+  "homepage": "https://github.com/Restless-Anchoret/noodle-backend#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
