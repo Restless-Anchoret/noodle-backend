@@ -4,8 +4,8 @@
   "description": "Noodle planning tool backend",
   "main": "index.js",
   "scripts": {
-    "run": "node src/index.js",
-    "run-monit": "nodemon src/index.js",
+    "start": "node index.js",
+    "start-monit": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
