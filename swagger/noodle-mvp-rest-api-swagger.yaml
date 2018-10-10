@@ -33,12 +33,38 @@ paths:
       responses:
         '201':
           schema:
-            $ref: '#/definitions/Account'
+            $ref: '#/definitions/SignInResponse'
           description: Successful operation.
         '400':
           description: |
             * Code 1 - Field values validation error.
             * Code 2 - Specified login is already used.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+
+  /account/sign-in:
+    post:
+      summary: Sign in the system
+      description: User sends login and password to the system and it returns his name and JWT token
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SignInRequest'
+      responses:
+        '200':
+          description: Successful operation.
+          schema:
+            $ref: '#/definitions/SignInResponse'
+        '400':
+          description: |
+            * Code 1 - Field values validation error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: |
+            * Code 3 - Incorrent login or password.
           schema:
             $ref: '#/definitions/ErrorResponse'
 
@@ -84,6 +110,7 @@ definitions:
         type: string
         description: Account name. Nonempty string.
         example: Name
+
   Account:
     type: object
     required:
@@ -103,6 +130,34 @@ definitions:
         type: string
         description: Account name.
         example: name
+
+  SignInResponse:
+    type: object
+    required:
+      - token
+      - account
+    properties:
+      token:
+        type: string
+        description: JWT token for current session.
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+      account:
+        $ref: '#/definitions/Account'
+
+  SignInRequest:
+    type: object
+    required:
+    - login
+    - password
+    properties:
+      login:
+        type: string
+        description: Account login. Nonempty string.
+        example: login
+      password:
+        type: string
+        description: Account password. Minimum length is 8 symbols, should contain both digits and letters.
+        example: password123
 
   # Version definitions
   VersionResponse:
