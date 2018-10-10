@@ -1,0 +1,116 @@
+swagger: '2.0'
+info:
+  description: >
+    REST API specification of Noodle planning system.
+  version: '1.0'
+  title: Noodle REST API
+basePath: /api/v1
+host: noodle-2d.com
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+produces:
+  - application/json
+consumes:
+  - application/json
+schemes:
+  - http
+
+paths:
+  # Account endpoints
+  /account:
+    post:
+      summary: Register in the system
+      description: User sends new login, name and password to the system and it registers a new account.
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RegistrationRequest'
+      responses:
+        '201':
+          schema:
+            $ref: '#/definitions/Account'
+          description: Successful operation.
+        '400':
+          description: |
+            * Code 1 - Field values validation error.
+            * Code 2 - Specified login is already used.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+
+  # Version endpoints
+  /version:
+    get:
+      summary: Get server version. Version matches _Semver_ specification.
+      responses:
+        200:
+          description: Successful operation.
+          schema:
+            $ref: '#/definitions/VersionResponse'
+
+definitions:
+  ErrorResponse:
+    type: object
+    description: This data structure is used to return error codes for HTTP 4xx responses.
+    required:
+      - code
+    properties:
+      code:
+        type: integer
+        example: 1
+        description: Error code.
+
+  # Account definitions
+  RegistrationRequest:
+    type: object
+    required:
+      - login
+      - password
+      - name
+    properties:
+      login:
+        type: string
+        description: Account login. Nonempty string.
+        example: login
+      password:
+        type: string
+        description: Account password. Minimum length is 8 symbols, should contain both digits and letters.
+        example: password123
+      name:
+        type: string
+        description: Account name. Nonempty string.
+        example: Name
+  Account:
+    type: object
+    required:
+      - id
+      - login
+      - name
+    properties:
+      id:
+        type: integer
+        description: Account id.
+        example: 10
+      login:
+        type: string
+        description: Account login.
+        example: login
+      name:
+        type: string
+        description: Account name.
+        example: name
+
+  # Version definitions
+  VersionResponse:
+    type: object
+    required:
+      - version
+    properties:
+      version:
+        type: string
+        description: Server version in semver format.
+        example: 1.2.3
