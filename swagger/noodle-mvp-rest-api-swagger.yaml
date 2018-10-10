@@ -19,7 +19,7 @@ schemes:
   - http
 
 paths:
-  # Account endpoints
+  # Account end points
   /account:
     get:
       summary: Get current account info
@@ -78,6 +78,43 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 
+  # List end points
+#  /lists:
+#    get:
+#      todo
+#    post:
+#      todo
+#
+#  /lists/{id}:
+#    put:
+#      todo
+#    delete:
+#      todo
+#
+#  /lists/{id}/tasks:
+#    get:
+#      todo
+
+  # Task end points
+#  /tasks:
+#    get:
+#      todo
+#    post:
+#      todo
+#
+#  /tasks/{id}:
+#    get:
+#      todo
+#    put:
+#      todo
+#    delete:
+#      todo
+
+  # Tag end points
+#  /tags:
+#    get:
+#      todo
+
   /account/sign-in:
     post:
       summary: Sign in the system
@@ -104,7 +141,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 
-  # Version endpoints
+  # Version end points
   /version:
     get:
       summary: Get server version. Version matches _Semver_ specification.
