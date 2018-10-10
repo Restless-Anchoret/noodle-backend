@@ -1,15 +1,28 @@
 version: '3.6'
 services:
 
-  pg:
-    container_name: pg
+  noodle-pg:
+    container_name: noodle-pg
     image: "postgres:9.6.5"
     ports:
-    - "5432:5432"
+      - "5432:5432"
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: user
       POSTGRES_DB: noodle
+
+  noodle-swagger:
+    container_name: noodle-swagger
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8081:8080"
+    environment:
+      - SWAGGER_JSON=/swagger/noodle-mvp-rest-api-swagger.yaml
+    volumes:
+      - "./swagger/:/swagger"
+#    links:
+#      - noodle-backend
+# todo: add noodle-backend service and uncomment this link
 
 networks:
   default:
