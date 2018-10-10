@@ -21,6 +21,16 @@ schemes:
 paths:
   # Account endpoints
   /account:
+    get:
+      summary: Get current account info
+      description: Returns id, login and name of currently authenticated account.
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: Successful operation.
+          schema:
+            $ref: '#/definitions/Account'
     post:
       summary: Register in the system
       description: User sends new login, name and password to the system and it registers a new account.
@@ -31,14 +41,40 @@ paths:
           schema:
             $ref: '#/definitions/RegistrationRequest'
       responses:
-        '201':
+        201:
+          description: Successful operation.
           schema:
             $ref: '#/definitions/SignInResponse'
-          description: Successful operation.
-        '400':
+        400:
           description: |
             * Code 1 - Field values validation error.
             * Code 2 - Specified login is already used.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    put:
+      summary: Change account name and password
+      description: User sends new name, old password and new password to the system and it changes his account.
+      security:
+        - Bearer: []
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ChangeAccountRequest'
+      responses:
+        200:
+          description: Successful operation.
+          schema:
+            $ref: '#/definitions/Account'
+        400:
+          description: |
+            * Code 1 - Field values validation error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        401:
+          description: |
+            * Code 3 - Incorrect old password.
           schema:
             $ref: '#/definitions/ErrorResponse'
 
@@ -53,18 +89,18 @@ paths:
           schema:
             $ref: '#/definitions/SignInRequest'
       responses:
-        '200':
+        200:
           description: Successful operation.
           schema:
             $ref: '#/definitions/SignInResponse'
-        '400':
+        400:
           description: |
             * Code 1 - Field values validation error.
           schema:
             $ref: '#/definitions/ErrorResponse'
-        '401':
+        401:
           description: |
-            * Code 3 - Incorrent login or password.
+            * Code 4 - Incorrect login or password.
           schema:
             $ref: '#/definitions/ErrorResponse'
 
@@ -147,14 +183,34 @@ definitions:
   SignInRequest:
     type: object
     required:
-    - login
-    - password
+      - login
+      - password
     properties:
       login:
         type: string
         description: Account login. Nonempty string.
         example: login
       password:
+        type: string
+        description: Account password. Minimum length is 8 symbols, should contain both digits and letters.
+        example: password123
+
+  ChangeAccountRequest:
+    type: object
+    required:
+      - name
+      - oldPassword
+      - newPassword
+    properties:
+      name:
+        type: string
+        description: Account name. Nonempty string.
+        example: Name
+      oldPassword:
+        type: string
+        description: Account password. Minimum length is 8 symbols, should contain both digits and letters.
+        example: password123
+      newPassword:
         type: string
         description: Account password. Minimum length is 8 symbols, should contain both digits and letters.
         example: password123
