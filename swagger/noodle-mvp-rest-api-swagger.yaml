@@ -166,6 +166,8 @@ definitions:
   ErrorResponse:
     type: object
     description: This data structure is used to return error codes for HTTP 4xx responses.
+    security:
+      - Bearer: []
     required:
       - code
     properties:
