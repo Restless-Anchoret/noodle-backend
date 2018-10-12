@@ -12,13 +12,17 @@ const configSchema = joi.object({
         database: joi.string().min(1).required(),
         user: joi.string().min(1).required(),
         password: joi.string().min(1).required(),
-        'min-connections': joi.number().integer().positive().required(),
-        'max-connections': joi.number().integer().positive().required()
+        minConnections: joi.number().integer().positive().required(),
+        maxConnections: joi.number().integer().positive().required()
     }).required(),
     http: joi.object({
         port: joi.number().port().required()
     }).required(),
-    env: joi.string().allow(['dev', 'prod', 'test'])
+    jwt: joi.object({
+        expiresIn: joi.string().min(1).required(),
+        secret: joi.string().min(1).required()
+    }).required(),
+    env: joi.string().allow(['dev', 'prod', 'test']).required()
 });
 
 async function retrieveConfig() {

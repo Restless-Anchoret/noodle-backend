@@ -8,3 +8,6 @@ db:
   max-connections: 20
 http:
   port: 8080
+jwt:
+  expires-in: 10d
+  secret: jhprouwy7345ythfeldgjae3h4utqhkuqwi4t73y4uthq3i4utyi7hkgakeuh4it73h4iq
