@@ -78,7 +78,33 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 
-  # List end points
+  /account/sign-in:
+    post:
+      summary: Sign in the system
+      description: User sends login and password to the system and it returns his name and JWT token
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SignInRequest'
+      responses:
+        200:
+          description: Successful operation.
+          schema:
+            $ref: '#/definitions/SignInResponse'
+        400:
+          description: |
+            * Code 1 - Field values validation error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        401:
+          description: |
+            * Code 4 - Incorrect login or password.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+
+  #List end points
 #  /lists:
 #    get:
 #      todo
@@ -111,40 +137,21 @@ paths:
 #      todo
 
   # Tag end points
-#  /tags:
-#    get:
-#      todo
-
-  /account/sign-in:
-    post:
-      summary: Sign in the system
-      description: User sends login and password to the system and it returns his name and JWT token
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/SignInRequest'
+  /tags:
+    get:
+      summary: Get list of user tags.
+      description: The system returns the list of currently authenticated user tags.
       responses:
         200:
           description: Successful operation.
           schema:
-            $ref: '#/definitions/SignInResponse'
-        400:
-          description: |
-            * Code 1 - Field values validation error.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        401:
-          description: |
-            * Code 4 - Incorrect login or password.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/TagItems'
 
   # Version end points
   /version:
     get:
-      summary: Get server version. Version matches _Semver_ specification.
+      summary: Get server version.
+      description: Version matches _Semver_ specification.
       responses:
         200:
           description: Successful operation.
@@ -251,6 +258,31 @@ definitions:
         type: string
         description: Account password. Minimum length is 8 symbols, should contain both digits and letters.
         example: password123
+
+  # Tag definitions
+  TagItems:
+    type: object
+    required:
+      - items
+    properties:
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/Tag'
+  Tag:
+    type: object
+    required:
+      - id
+      - name
+    properties:
+      id:
+        type: integer
+        description: Tag id.
+        example: 4
+      name:
+        type: string
+        description: Tag name.
+        example: Tag
 
   # Version definitions
   VersionResponse:
