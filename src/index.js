@@ -1,17 +1,15 @@
 const configRetriever = require('./util/config-retriever');
 const migration = require('./util/migration');
+const routingConfigurator = require('./util/routing-configurator');
 const loggerFactory = require('./util/logger-factory');
 
 const log = loggerFactory.getLogger(__filename);
 
 async function startApplication() {
-    log.info('Noodle initialization started');
-
     loggerFactory.configure();
     const config = await configRetriever.retrieve();
     await migration.run(config);
-
-    log.info('Noodle initialization finished');
+    await routingConfigurator.configure(config);
 }
 
 startApplication()
