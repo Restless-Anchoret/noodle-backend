@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const yaml = require('js-yaml');
 const joi = require('joi');
+const applicationContext = require('./application-context');
 const loggerFactory = require('./logger-factory');
 
 const log = loggerFactory.getLogger(__filename);
@@ -38,7 +39,8 @@ async function retrieveConfig() {
     validateConfig(config);
     log.info('Config validation passed');
 
-    return config;
+    applicationContext.config = config;
+    log.debug('Config was put into application context');
 }
 
 function getEnv() {

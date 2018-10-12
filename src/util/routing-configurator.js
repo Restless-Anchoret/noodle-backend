@@ -1,10 +1,11 @@
 const express = require('express');
 const controllerRegistry = require('../controller/registry');
+const appContext = require('./application-context');
 const loggerFactory = require('./logger-factory');
 
 const log = loggerFactory.getLogger(__filename);
 
-async function configureRouting(config) {
+async function configureRouting() {
     log.info('Routing configuration started');
 
     const app = express();
@@ -12,7 +13,7 @@ async function configureRouting(config) {
 
     addJwtMiddleware(app);
     configureControllers(app, controllers);
-    await listenPort(app, config.http.port);
+    await listenPort(app, appContext.config.http.port);
 
     log.info('Routing configuration finished');
 }
@@ -40,6 +41,7 @@ function configureEndPoint(app, controller, endPoint) {
             .then(result => response.json(result))
             .catch(err => log.error(err)); // todo: add error middleware
     });
+    log.debug('Route configured:', endPoint.method, url);
 }
 
 function listenPort(app, port) {

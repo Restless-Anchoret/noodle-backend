@@ -7,9 +7,9 @@ const log = loggerFactory.getLogger(__filename);
 
 async function startApplication() {
     loggerFactory.configure();
-    const config = await configRetriever.retrieve();
-    await migration.run(config);
-    await routingConfigurator.configure(config);
+    await configRetriever.retrieve();
+    await migration.run();
+    await routingConfigurator.configure();
 }
 
 startApplication()

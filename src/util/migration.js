@@ -1,14 +1,15 @@
 const dbMigrate = require('db-migrate');
+const appContext = require('./application-context');
 const loggerFactory = require('./logger-factory');
 
 const log = loggerFactory.getLogger(__filename);
 
-async function runMigration(config) {
+async function runMigration() {
     log.info('Database migration started');
 
     dbMigrateInstance = dbMigrate.getInstance(true, {
         config: 'config/database.json',
-        env: config.env
+        env: appContext.config.env
     });
 
     await dbMigrateInstance.up();
