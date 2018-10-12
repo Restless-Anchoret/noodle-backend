@@ -54,6 +54,8 @@ paths:
     put:
       summary: Change account name and password
       description: User sends new name, old password and new password to the system and it changes his account.
+        Name or passwords can be absent in the request, the system will change only present fields.
+        Old and new passwords should be present in the request together.
       security:
         - Bearer: []
       parameters:
@@ -141,6 +143,8 @@ paths:
     get:
       summary: Get list of user tags.
       description: The system returns the list of currently authenticated user tags.
+      security:
+        - Bearer: []
       responses:
         200:
           description: Successful operation.
@@ -197,6 +201,8 @@ definitions:
       - id
       - login
       - name
+      - lastLoginDate
+      - registrationDate
     properties:
       id:
         type: integer
@@ -210,6 +216,16 @@ definitions:
         type: string
         description: Account name.
         example: name
+      lastLoginDate:
+        type: string
+        format: date-time
+        description: Account last login date.
+        example: '2012-04-23T18:25:43.511Z'
+      registrationDate:
+        type: string
+        format: date-time
+        description: Account regitration date.
+        example: '2012-04-23T18:25:43.511Z'
 
   SignInResponse:
     type: object
@@ -241,10 +257,6 @@ definitions:
 
   ChangeAccountRequest:
     type: object
-    required:
-      - name
-      - oldPassword
-      - newPassword
     properties:
       name:
         type: string
