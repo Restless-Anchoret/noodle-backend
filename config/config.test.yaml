@@ -4,10 +4,10 @@ db:
   database: noodle
   user: user
   password: password
-  min-connections: 1
-  max-connections: 20
+  minConnections: 1
+  maxConnections: 20
 http:
   port: 8080
 jwt:
-  expires-in: 10d
+  expiresIn: 10d
   secret: jhprouwy7345ythfeldgjae3h4utqhkuqwi4t73y4uthq3i4utyi7hkgakeuh4it73h4iq
