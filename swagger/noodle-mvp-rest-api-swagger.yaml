@@ -31,6 +31,11 @@ paths:
           description: Successful operation.
           schema:
             $ref: '#/definitions/Account'
+        401:
+          description: |
+            * Code 3 - Required JWT token is absent, invalid or expired.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
     post:
       summary: Register in the system
       description: User sends new login, name and password to the system and it registers a new account.
@@ -47,8 +52,8 @@ paths:
             $ref: '#/definitions/SignInResponse'
         400:
           description: |
-            * Code 1 - Field values validation error.
-            * Code 2 - Specified login is already used.
+            * Code 1 - Request body validation error.
+            * Code 2 - Login is already used.
           schema:
             $ref: '#/definitions/ErrorResponse'
     put:
@@ -71,12 +76,17 @@ paths:
             $ref: '#/definitions/Account'
         400:
           description: |
-            * Code 1 - Field values validation error.
+            * Code 1 - Request body validation error.
           schema:
             $ref: '#/definitions/ErrorResponse'
         401:
           description: |
-            * Code 3 - Incorrect old password.
+            * Code 3 - Required JWT token is absent, invalid or expired.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        403:
+          description: |
+            * Code 5 - Incorrect old password.
           schema:
             $ref: '#/definitions/ErrorResponse'
 
@@ -100,7 +110,7 @@ paths:
             * Code 1 - Field values validation error.
           schema:
             $ref: '#/definitions/ErrorResponse'
-        401:
+        403:
           description: |
             * Code 4 - Incorrect login or password.
           schema:
@@ -150,6 +160,11 @@ paths:
           description: Successful operation.
           schema:
             $ref: '#/definitions/TagItems'
+        401:
+          description: |
+            * Code 3 - Required JWT token is absent, invalid or expired.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
 
   # Version end points
   /version:
@@ -168,11 +183,16 @@ definitions:
     description: This data structure is used to return error codes for HTTP 4xx responses.
     required:
       - code
+      - message
     properties:
       code:
         type: integer
-        example: 1
         description: Error code.
+        example: 1
+      message:
+        type: string
+        description: Error message.
+        example: Message.
 
   # Account definitions
   RegistrationRequest:
