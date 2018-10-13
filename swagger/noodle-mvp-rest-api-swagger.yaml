@@ -52,7 +52,7 @@ paths:
             $ref: '#/definitions/SignInResponse'
         400:
           description: |
-            * Code 1 - Request body validation error.
+            * Code 1 - Request validation error.
             * Code 2 - Login is already used.
           schema:
             $ref: '#/definitions/ErrorResponse'
@@ -76,7 +76,7 @@ paths:
             $ref: '#/definitions/Account'
         400:
           description: |
-            * Code 1 - Request body validation error.
+            * Code 1 - Request validation error.
           schema:
             $ref: '#/definitions/ErrorResponse'
         401:
@@ -107,7 +107,7 @@ paths:
             $ref: '#/definitions/SignInResponse'
         400:
           description: |
-            * Code 1 - Field values validation error.
+            * Code 1 - Request validation error.
           schema:
             $ref: '#/definitions/ErrorResponse'
         403:
