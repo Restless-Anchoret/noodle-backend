@@ -55,27 +55,27 @@ class LoginAlreadyUsedError extends BadRequestError {
     }
 }
 
-class JwtTokenError extends RestApiError {
-    constructor(message) {
+class JwtTokenError extends UnauthorizedError {
+    constructor() {
         super('JwtTokenError', 'Required JWT token is absent, invalid or expired.', 3);
     }
 }
 
-class IncorrectLoginPasswordError extends RestApiError {
-    constructor(message) {
-        super('IncorrectLoginPasswordError', 'Incorrect login or password.', 3);
+class IncorrectLoginPasswordError extends UnauthorizedError {
+    constructor() {
+        super('IncorrectLoginPasswordError', 'Incorrect login or password.', 4);
     }
 }
 
-class IncorrectOldPasswordError extends RestApiError {
-    constructor(message) {
-        super('IncorrectOldPasswordError', 'Incorrect old password.', 3);
+class IncorrectOldPasswordError extends ForbiddenError {
+    constructor() {
+        super('IncorrectOldPasswordError', 'Incorrect old password.', 4);
     }
 }
 
-class ResourceNotFoundError extends RestApiError {
-    constructor(message) {
-        super('ResourceNotFoundError', 'Resource not found.', 3);
+class ResourceNotFoundError extends NotFoundError {
+    constructor() {
+        super('ResourceNotFoundError', 'Resource not found.', 5);
     }
 }
 

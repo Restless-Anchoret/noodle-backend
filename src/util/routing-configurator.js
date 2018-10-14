@@ -1,6 +1,9 @@
 const express = require('express');
 const controllerRegistry = require('../controller/registry');
 const appContext = require('./application-context');
+const jwtMiddleware = require('../middleware/jwt-middleware');
+const errorMiddleware = require('../middleware/error-middleware');
+const validationMiddleware = require('../middleware/validation-middleware');
 const loggerFactory = require('./logger-factory');
 
 const log = loggerFactory.getLogger(__filename);
@@ -9,17 +12,13 @@ async function configureRouting() {
     log.info('Routing configuration started');
 
     const app = express();
+    app.use(express.json());
     const controllers = controllerRegistry.controllers;
 
-    addJwtMiddleware(app);
     configureControllers(app, controllers);
     await listenPort(app, appContext.config.http.port);
 
     log.info('Routing configuration finished');
-}
-
-function addJwtMiddleware(app) {
-    // todo: add jwt middleware
 }
 
 function configureControllers(app, controllers) {
@@ -33,15 +32,38 @@ function configureControllers(app, controllers) {
 function configureEndPoint(app, controller, endPoint) {
     const url = `/api/v${endPoint.version}${controller.url}${endPoint.url}`;
     app[endPoint.method](url, (request, response) => {
-        log.debug('Request to:', request.url);
-        // todo: add secure middleware
-        // todo: add validation middleware
-        // todo: build context
-        endPoint.handler()
-            .then(result => response.json(result))
-            .catch(err => log.error(err)); // todo: add error middleware
+        log.debug('Request to:', endPoint.method, request.url);
+        processRequest(request, response, endPoint)
+            .then(result => processResponse(response, result, endPoint))
+            .catch(err => errorMiddleware(request, response, err))
     });
     log.debug('Route configured:', endPoint.method, url);
+}
+
+async function processRequest(request, response, endPoint) {
+    await jwtMiddleware(request, response, endPoint.secured);
+    await validationMiddleware(request, response, endPoint.validationSchema);
+    const requestContext = buildRequestContext(request);
+    return await endPoint.handler(requestContext);
+}
+
+function buildRequestContext(request) {
+    return {
+        body: request.body,
+        query: request.query,
+        params: request.params,
+        jwtPayload: request.jwtPayload
+    };
+}
+
+function processResponse(response, requestResult, endPoint) {
+    if (!requestResult) {
+        response.status(204);
+        return;
+    }
+
+    response.status(endPoint.successStatus || 200);
+    response.json(requestResult);
 }
 
 function listenPort(app, port) {

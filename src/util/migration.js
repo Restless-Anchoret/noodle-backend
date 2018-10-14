@@ -7,7 +7,7 @@ const log = loggerFactory.getLogger(__filename);
 async function runMigration() {
     log.info('Database migration started');
 
-    dbMigrateInstance = dbMigrate.getInstance(true, {
+    const dbMigrateInstance = dbMigrate.getInstance(true, {
         config: 'config/database.json',
         env: appContext.config.env
     });
