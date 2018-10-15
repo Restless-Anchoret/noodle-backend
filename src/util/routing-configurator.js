@@ -1,4 +1,5 @@
 const express = require('express');
+const helmet = require('helmet');
 const controllerRegistry = require('../controller/registry');
 const appContext = require('./application-context');
 const jwtMiddleware = require('../middleware/jwt-middleware');
@@ -13,9 +14,9 @@ async function configureRouting () {
 
     const app = express();
     app.use(express.json());
-    const controllers = controllerRegistry.controllers;
+    app.use(helmet());
 
-    configureControllers(app, controllers);
+    configureControllers(app, controllerRegistry.controllers);
     await listenPort(app, appContext.config.http.port);
 
     log.info('Routing configuration finished');
