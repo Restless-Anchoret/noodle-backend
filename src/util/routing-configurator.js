@@ -8,7 +8,7 @@ const loggerFactory = require('./logger-factory');
 
 const log = loggerFactory.getLogger(__filename);
 
-async function configureRouting() {
+async function configureRouting () {
     log.info('Routing configuration started');
 
     const app = express();
@@ -21,7 +21,7 @@ async function configureRouting() {
     log.info('Routing configuration finished');
 }
 
-function configureControllers(app, controllers) {
+function configureControllers (app, controllers) {
     controllers.forEach(controller => {
         controller.endPoints.forEach(endPoint => {
             configureEndPoint(app, controller, endPoint);
@@ -29,25 +29,25 @@ function configureControllers(app, controllers) {
     });
 }
 
-function configureEndPoint(app, controller, endPoint) {
+function configureEndPoint (app, controller, endPoint) {
     const url = `/api/v${endPoint.version}${controller.url}${endPoint.url}`;
     app[endPoint.method](url, (request, response) => {
         log.debug('Request to:', endPoint.method, request.url);
         processRequest(request, response, endPoint)
             .then(result => processResponse(response, result, endPoint))
-            .catch(err => errorMiddleware(request, response, err))
+            .catch(err => errorMiddleware(request, response, err));
     });
     log.debug('Route configured:', endPoint.method, url);
 }
 
-async function processRequest(request, response, endPoint) {
+async function processRequest (request, response, endPoint) {
     await jwtMiddleware(request, response, endPoint.secured);
     await validationMiddleware(request, response, endPoint.validationSchema);
     const requestContext = buildRequestContext(request);
-    return await endPoint.handler(requestContext);
+    return endPoint.handler(requestContext);
 }
 
-function buildRequestContext(request) {
+function buildRequestContext (request) {
     return {
         body: request.body,
         query: request.query,
@@ -56,7 +56,7 @@ function buildRequestContext(request) {
     };
 }
 
-function processResponse(response, requestResult, endPoint) {
+function processResponse (response, requestResult, endPoint) {
     if (!requestResult) {
         response.status(204);
         return;
@@ -66,7 +66,7 @@ function processResponse(response, requestResult, endPoint) {
     response.json(requestResult);
 }
 
-function listenPort(app, port) {
+function listenPort (app, port) {
     return new Promise((resolve, reject) => {
         app.listen(port, (err) => {
             if (err) {

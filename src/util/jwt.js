@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const appContext = require('./application-context');
 
-function sign(payload) {
+function sign (payload) {
     const secret = appContext.config.jwt.secret;
     const expiresIn = appContext.config.jwt.expiresIn;
 
@@ -18,7 +18,7 @@ function sign(payload) {
     });
 }
 
-function verify(token) {
+function verify (token) {
     const secret = appContext.config.jwt.secret;
 
     return new Promise((resolve, reject) => {
@@ -28,7 +28,7 @@ function verify(token) {
             } else {
                 resolve(decoded);
             }
-        })
+        });
     });
 }
 

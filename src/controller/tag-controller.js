@@ -1,4 +1,4 @@
-async function getTags(context) {
+async function getTags (context) {
     // todo
 }
 

@@ -1,14 +1,17 @@
 const jwt = require('../util/jwt');
 
-async function getAccount(context) {
+async function getAccount (context) {
     // todo
+    return {
+        id: context.jwtPayload.id
+    };
 }
 
-async function registerAccount(context) {
+async function registerAccount (context) {
     // todo
 
     const account = {
-        id: 10,
+        id: 1,
         login: 'login',
         name: 'name'
     };
@@ -20,11 +23,11 @@ async function registerAccount(context) {
     };
 }
 
-async function updateAccount(context) {
+async function updateAccount (context) {
     // todo
 }
 
-async function signIn(context) {
+async function signIn (context) {
     // todo
 }
 
@@ -44,6 +47,7 @@ const controller = {
             method: 'post',
             version: 1,
             validationSchema: {}, // todo: add schema
+            successStatus: 201,
             handler: registerAccount
         },
         {

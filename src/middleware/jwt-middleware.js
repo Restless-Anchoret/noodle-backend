@@ -4,7 +4,7 @@ const loggerFactory = require('../util/logger-factory');
 
 const log = loggerFactory.getLogger(__filename);
 
-async function middleware(request, response, secured) {
+async function middleware (request, response, secured) {
     if (!secured) {
         return;
     }
@@ -24,7 +24,7 @@ async function middleware(request, response, secured) {
     }
 }
 
-function retrieveToken(header) {
+function retrieveToken (header) {
     if (header && header.startsWith('Bearer ')) {
         return header.slice(7);
     }

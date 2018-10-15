@@ -5,7 +5,7 @@ const loggerFactory = require('./util/logger-factory');
 
 const log = loggerFactory.getLogger(__filename);
 
-async function startApplication() {
+async function startApplication () {
     loggerFactory.configure();
     await configRetriever.retrieve();
     await migration.run();

@@ -1,4 +1,4 @@
-async function getLists(context) {
+async function getLists (context) {
     // todo
 }
 

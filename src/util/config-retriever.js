@@ -26,7 +26,7 @@ const configSchema = joi.object({
     env: joi.string().allow(['dev', 'prod', 'test']).required()
 });
 
-async function retrieveConfig() {
+async function retrieveConfig () {
     log.info('Reading config');
 
     const env = getEnv();
@@ -43,11 +43,11 @@ async function retrieveConfig() {
     log.debug('Config was put into application context');
 }
 
-function getEnv() {
+function getEnv () {
     return process.env['NODE_ENV'] || 'dev';
 }
 
-async function parseConfig(env) {
+async function parseConfig (env) {
     const configPath = `config/config.${env}.yaml`;
     log.debug('Reading config from:', configPath);
 
@@ -60,7 +60,7 @@ async function parseConfig(env) {
     return config;
 }
 
-function validateConfig(config) {
+function validateConfig (config) {
     const validationResult = joi.validate(config, configSchema);
     log.trace('Validation result:', validationResult);
 

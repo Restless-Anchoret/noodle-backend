@@ -4,7 +4,7 @@ const loggerFactory = require('./logger-factory');
 
 const log = loggerFactory.getLogger(__filename);
 
-async function runMigration() {
+async function runMigration () {
     log.info('Database migration started');
 
     const dbMigrateInstance = dbMigrate.getInstance(true, {
