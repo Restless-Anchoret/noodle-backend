@@ -43,7 +43,7 @@ function configureEndPoint (app, controller, endPoint) {
 
 async function processRequest (request, response, endPoint) {
     await jwtMiddleware(request, response, endPoint.secured);
-    await validationMiddleware(request, response, endPoint.validationSchema);
+    validationMiddleware(request, response, endPoint.validationSchema);
     const requestContext = buildRequestContext(request);
     return endPoint.handler(requestContext);
 }
