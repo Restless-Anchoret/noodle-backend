@@ -204,15 +204,15 @@ definitions:
     properties:
       login:
         type: string
-        description: Account login. Nonempty string.
+        description: Account login. Minimum length is 1 symbol, maximum length is 50 symbols.
         example: login
       password:
         type: string
-        description: Account password. Minimum length is 8 symbols, should contain both digits and letters.
+        description: Account password. Minimum length is 8 symbols, should contain both digits and latin letters.
         example: password123
       name:
         type: string
-        description: Account name. Nonempty string.
+        description: Account name. Minimum length is 1 symbol, maximum length is 100 symbols.
         example: Name
 
   Account:

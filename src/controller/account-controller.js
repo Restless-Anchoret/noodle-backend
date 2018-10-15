@@ -1,4 +1,5 @@
 const jwt = require('../util/jwt');
+const schema = require('../schema/account-schema');
 
 async function getAccount (context) {
     // todo
@@ -39,14 +40,13 @@ const controller = {
             method: 'get',
             version: 1,
             secured: true,
-            validationSchema: {}, // todo: add schema
             handler: getAccount
         },
         {
             url: '',
             method: 'post',
             version: 1,
-            validationSchema: {}, // todo: add schema
+            validationSchema: schema.postAccountSchema,
             successStatus: 201,
             handler: registerAccount
         },
@@ -55,14 +55,14 @@ const controller = {
             method: 'put',
             version: 1,
             secured: true,
-            validationSchema: {}, // todo: add schema
+            validationSchema: schema.putAccountSchema,
             handler: updateAccount
         },
         {
             url: '/sign-in',
             method: 'post',
             version: 1,
-            validationSchema: {}, // todo: add schema
+            validationSchema: schema.signInSchema,
             handler: signIn
         }
     ]
