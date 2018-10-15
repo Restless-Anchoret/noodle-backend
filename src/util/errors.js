@@ -82,10 +82,6 @@ class ResourceNotFoundError extends NotFoundError {
 module.exports = {
     RestApiError: RestApiError,
     RestApi4xxError: RestApi4xxError,
-    BadRequestError: BadRequestError,
-    UnauthorizedError: UnauthorizedError,
-    ForbiddenError: ForbiddenError,
-    NotFoundError: NotFoundError,
     InternalServerError: InternalServerError,
     ValidationError: ValidationError,
     LoginAlreadyUsedError: LoginAlreadyUsedError,

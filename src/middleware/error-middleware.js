@@ -1,4 +1,4 @@
-const { RestApiError } = require('../util/errors');
+const { RestApiError, RestApi4xxError } = require('../util/errors');
 const loggerFactory = require('../util/logger-factory');
 
 const log = loggerFactory.getLogger(__filename);
@@ -12,10 +12,15 @@ function middleware(request, response, error) {
 
     log.warn('Handled REST API error:', error);
     response.status(error.httpCode);
-    response.json({
-        code: error.errorCode,
-        message: error.message
-    });
+
+    if (error instanceof RestApi4xxError) {
+        response.json({
+            code: error.errorCode,
+            message: error.message
+        });
+    } else {
+        response.send();
+    }
 }
 
 module.exports = middleware;
