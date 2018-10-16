@@ -20,9 +20,6 @@ services:
       - SWAGGER_JSON=/swagger/noodle-mvp-rest-api-swagger.yaml
     volumes:
       - "./swagger/:/swagger"
-#    links:
-#      - noodle-backend
-# todo: add noodle-backend service and uncomment this link
 
 networks:
   default:
