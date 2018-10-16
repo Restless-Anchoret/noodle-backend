@@ -3,8 +3,8 @@ create table account (
   login varchar(50) unique not null,
   password_hash varchar(100) not null,
   name varchar(100) not null,
-  last_login_date timestamp not null,
-  registration_date timestamp not null
+  last_login_date timestamptz not null,
+  registration_date timestamptz not null
 );
 
 create table list (
@@ -29,11 +29,11 @@ create table task (
   has_children boolean not null,
   list_id integer not null references list(id),
   index integer not null,
-  creation_date timestamp not null,
-  start_date timestamp,
-  end_date timestamp,
-  planning_date timestamp,
-  deadline timestamp,
+  creation_date timestamptz not null,
+  start_date timestamptz,
+  end_date timestamptz,
+  planning_date timestamptz,
+  deadline timestamptz,
   check (status in ('TO_DO', 'IN_PROGRESS', 'DONE'))
 );
 
