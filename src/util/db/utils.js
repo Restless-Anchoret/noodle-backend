@@ -7,6 +7,13 @@ function getOnly (results) {
     return results[0];
 }
 
+function getFirstOrNull (results) {
+    if (results.length === 0) {
+        return null;
+    }
+    return results[0];
+}
+
 function mapUnderscoreToCamelForString (string) {
     let newString = '';
     let i = 0;
@@ -56,6 +63,7 @@ function mapCamelToUnderscoreForObject (object) {
 
 module.exports = {
     getOnly: getOnly,
+    getFirstOrNull: getFirstOrNull,
     mapFieldsToCamel: mapUnderscoreToCamelForObject,
     mapFieldsToUnderscore: mapCamelToUnderscoreForObject
 };

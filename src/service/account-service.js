@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('../util/jwt');
 const db = require('../util/db/db');
 const accountDao = require('../dao/account-dao');
+const { LoginAlreadyUsedError } = require('../util/errors');
 
 const SALT_ROUNDS = 10;
 
@@ -12,7 +13,12 @@ async function getAccount (context) {
 
 async function registerAccount (context) {
     const dto = context.body;
-    // todo: check if login is available first
+
+    const alreadyExistingAccount = await accountDao.getAccountByLogin(db, dto.login);
+    if (alreadyExistingAccount) {
+        throw new LoginAlreadyUsedError();
+    }
+
     const now = new Date();
     const passwordHash = await bcrypt.hash(dto.password, SALT_ROUNDS);
 
