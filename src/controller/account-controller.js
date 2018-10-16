@@ -1,36 +1,5 @@
-const jwt = require('../util/jwt');
+const accountService = require('../service/account-service');
 const schema = require('../schema/account-schema');
-
-async function getAccount (context) {
-    // todo
-    return {
-        id: context.jwtPayload.id
-    };
-}
-
-async function registerAccount (context) {
-    // todo
-
-    const account = {
-        id: 1,
-        login: 'login',
-        name: 'name'
-    };
-    const token = await jwt.sign({ id: account.id });
-
-    return {
-        token: token,
-        account: account
-    };
-}
-
-async function updateAccount (context) {
-    // todo
-}
-
-async function signIn (context) {
-    // todo
-}
 
 const controller = {
     url: '/account',
@@ -40,7 +9,7 @@ const controller = {
             method: 'get',
             version: 1,
             secured: true,
-            handler: getAccount
+            handler: accountService.getAccount
         },
         {
             url: '',
@@ -48,7 +17,7 @@ const controller = {
             version: 1,
             validationSchema: schema.postAccountSchema,
             successStatus: 201,
-            handler: registerAccount
+            handler: accountService.registerAccount
         },
         {
             url: '',
@@ -56,14 +25,14 @@ const controller = {
             version: 1,
             secured: true,
             validationSchema: schema.putAccountSchema,
-            handler: updateAccount
+            handler: accountService.updateAccount
         },
         {
             url: '/sign-in',
             method: 'post',
             version: 1,
             validationSchema: schema.signInSchema,
-            handler: signIn
+            handler: accountService.signIn
         }
     ]
 };
