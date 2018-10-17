@@ -1,5 +1,5 @@
 const { Pool } = require('pg');
-const applicationContext = require('../application-context');
+const appContext = require('../application-context');
 const _ = require('lodash');
 const dbUtils = require('./utils');
 const loggerFactory = require('../logger-factory');
@@ -13,7 +13,7 @@ function getPool () {
         return pool;
     }
 
-    const config = applicationContext.config;
+    const config = appContext.config;
     pool = new Pool({
         user: config.db.user,
         host: config.db.host,
@@ -131,7 +131,8 @@ function getInsertParams (entity) {
 async function findByIdForClient (client, id, table) {
     const query = `select * from ${table} where id = $1`;
     const result = await client.query(query, [id]);
-    return convert(result, dbUtils.mapFieldsToCamel);
+    const convertedResults = convert(result, dbUtils.mapFieldsToCamel);
+    return dbUtils.getOnly(convertedResults);
 }
 
 module.exports = {
