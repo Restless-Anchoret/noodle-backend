@@ -93,7 +93,7 @@ paths:
   /account/sign-in:
     post:
       summary: Sign in the system
-      description: User sends login and password to the system and it returns his name and JWT token
+      description: User sends login and password to the system and it returns his name and JWT token.
       parameters:
         - name: body
           in: body
@@ -117,18 +117,95 @@ paths:
             $ref: '#/definitions/ErrorResponse'
 
   #List end points
-#  /lists:
-#    get:
-#      todo
-#    post:
-#      todo
-#
-#  /lists/{id}:
-#    put:
-#      todo
-#    delete:
-#      todo
-#
+  /lists:
+    get:
+      summary: Get user lists.
+      description: The system returns lists of currently authenticated user.
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: Successful operation.
+          schema:
+            $ref: '#/definitions/ListItems'
+        401:
+          description: |
+            * Code 3 - Required JWT token is absent, invalid or expired.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    post:
+      summary: Create a new list.
+      description: User sends new list title, and the system create new list.
+      security:
+        - Bearer: []
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ListRequest'
+      responses:
+        200:
+          description: Successful operation.
+          schema:
+            $ref: '#/definitions/List'
+        400:
+          description: |
+            * Code 1 - Request validation error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        401:
+          description: |
+            * Code 3 - Required JWT token is absent, invalid or expired.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+
+  /lists/{id}:
+    put:
+      summary: Modify the list.
+      description: User sends new list name, and the system renames the list.
+      security:
+        - Bearer: []
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ListRequest'
+      responses:
+        200:
+          description: Successful operation.
+          schema:
+            $ref: '#/definitions/List'
+        400:
+          description: |
+            * Code 1 - Request validation error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        401:
+          description: |
+            * Code 3 - Required JWT token is absent, invalid or expired.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    delete:
+      summary: Delete the list.
+      description: The system deletes the list with all its tasks.
+      security:
+        - Bearer: []
+      responses:
+        204:
+          description: Successful operation.
+        400:
+          description: |
+            * Code 1 - Request validation error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        401:
+          description: |
+            * Code 3 - Required JWT token is absent, invalid or expired.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+
 #  /lists/{id}/tasks:
 #    get:
 #      todo
@@ -290,6 +367,40 @@ definitions:
         type: string
         description: Account password. Minimum length is 8 symbols, should contain both digits and letters.
         example: password123
+
+  # List definitions
+  ListItems:
+    type: object
+    required:
+      - items
+    properties:
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/List'
+  List:
+    type: object
+    required:
+      - id
+      - title
+    properties:
+      id:
+        type: integer
+        description: List id.
+        example: 5
+      title:
+        type: string
+        description: List title.
+        example: Title
+  ListRequest:
+    type: object
+    required:
+      - title
+    properties:
+      login:
+        type: string
+        description: List title. Minimum length is 1 symbol, maximum length is 100 symbols.
+        example: Title
 
   # Tag definitions
   TagItems:
