@@ -302,19 +302,9 @@ definitions:
         items:
           $ref: '#/definitions/Tag'
   Tag:
-    type: object
-    required:
-      - id
-      - name
-    properties:
-      id:
-        type: integer
-        description: Tag id.
-        example: 4
-      name:
-        type: string
-        description: Tag name.
-        example: Tag
+    type: string
+    description: Tag name.
+    example: Tag
 
   # Version definitions
   VersionResponse:

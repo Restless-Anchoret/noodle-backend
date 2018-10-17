@@ -1,6 +1,4 @@
-async function getTags (context) {
-    // todo
-}
+const tagService = require('../service/tag-service');
 
 const controller = {
     url: '/tags',
@@ -10,8 +8,7 @@ const controller = {
             method: 'get',
             version: 1,
             secured: true,
-            validationSchema: {}, // todo: add schema
-            handler: getTags
+            handler: tagService.getTags
         }
     ]
 };
