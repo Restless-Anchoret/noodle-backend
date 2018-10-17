@@ -272,7 +272,7 @@ definitions:
         example: login
       password:
         type: string
-        description: Account password. Minimum length is 8 symbols, should contain both digits and letters.
+        description: Account password. Nonempty string.
         example: password123
 
   ChangeAccountRequest:
@@ -280,11 +280,11 @@ definitions:
     properties:
       name:
         type: string
-        description: Account name. Nonempty string.
+        description: Account name. Minimum length is 1 symbol, maximum length is 100 symbols.
         example: Name
       oldPassword:
         type: string
-        description: Account password. Minimum length is 8 symbols, should contain both digits and letters.
+        description: Account password. Nonempty string.
         example: password123
       newPassword:
         type: string
