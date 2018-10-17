@@ -2,13 +2,15 @@ const bcrypt = require('bcrypt');
 const jwt = require('../util/jwt');
 const db = require('../util/db/db');
 const accountDao = require('../dao/account-dao');
-const { LoginAlreadyUsedError } = require('../util/errors');
+const _ = require('lodash');
+const { LoginAlreadyUsedError, IncorrectLoginPasswordError } = require('../util/errors');
 
 const SALT_ROUNDS = 10;
 
 async function getAccount (context) {
     const accountId = context.jwtPayload.id;
-    return accountDao.getAccountById(db, accountId);
+    const account = await accountDao.getAccountById(db, accountId);
+    return mapAccount(account);
 }
 
 async function registerAccount (context) {
@@ -31,11 +33,7 @@ async function registerAccount (context) {
     };
     await accountDao.insertAccount(db, account);
 
-    const token = await jwt.sign({ id: account.id });
-    return {
-        token: token,
-        account: account
-    };
+    return getTokenWithAccount(account);
 }
 
 async function updateAccount (context) {
@@ -43,7 +41,33 @@ async function updateAccount (context) {
 }
 
 async function signIn (context) {
-    // todo
+    const dto = context.body;
+
+    const account = await accountDao.getAccountByLogin(db, dto.login);
+    if (!account) {
+        throw new IncorrectLoginPasswordError();
+    }
+
+    const hashMatch = await bcrypt.compare(dto.password, account.passwordHash);
+    if (!hashMatch) {
+        throw new IncorrectLoginPasswordError();
+    }
+
+    return getTokenWithAccount(account);
+}
+
+async function getTokenWithAccount (account) {
+    const token = await jwt.sign({ id: account.id });
+    return {
+        token: token,
+        account: mapAccount(account)
+    };
+}
+
+function mapAccount (account) {
+    const mappedAccount = _.clone(account);
+    mappedAccount.passwordHash = undefined;
+    return mappedAccount;
 }
 
 module.exports = {
