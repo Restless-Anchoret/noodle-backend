@@ -119,7 +119,7 @@ paths:
   #List end points
   /lists:
     get:
-      summary: Get user lists.
+      summary: Get user lists
       description: The system returns lists of currently authenticated user.
       security:
         - Bearer: []
@@ -134,7 +134,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
     post:
-      summary: Create a new list.
+      summary: Create a new list
       description: User sends new list title, and the system create new list.
       security:
         - Bearer: []
@@ -162,7 +162,7 @@ paths:
 
   /lists/{id}:
     put:
-      summary: Modify the list.
+      summary: Modify the list
       description: User sends new list name, and the system renames the list.
       security:
         - Bearer: []
@@ -188,7 +188,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
     delete:
-      summary: Delete the list.
+      summary: Delete the list
       description: The system deletes the list with all its tasks.
       security:
         - Bearer: []
@@ -216,10 +216,28 @@ paths:
 #      todo
 #    post:
 #      todo
-#
-#  /tasks/{id}:
-#    get:
-#      todo
+
+  /tasks/{id}:
+    get:
+      summary: Get detailed task info
+      description: The system returns detailed task info with its status, title, description, tags and creation, start, end dates.
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: Successful operation.
+          schema:
+            $ref: '#/definitions/Task'
+        400:
+          description: |
+            * Code 1 - Request validation error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        401:
+          description: |
+            * Code 3 - Required JWT token is absent, invalid or expired.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
 #    put:
 #      todo
 #    delete:
@@ -228,7 +246,7 @@ paths:
   # Tag end points
   /tags:
     get:
-      summary: Get list of user tags.
+      summary: Get list of user tags
       description: The system returns the list of currently authenticated user tags.
       security:
         - Bearer: []
@@ -246,7 +264,7 @@ paths:
   # Version end points
   /version:
     get:
-      summary: Get server version.
+      summary: Get server version
       description: Version matches _Semver_ specification.
       responses:
         200:
@@ -401,6 +419,59 @@ definitions:
         type: string
         description: List title. Minimum length is 1 symbol, maximum length is 100 symbols.
         example: Title
+
+  # Task definitions
+  Task:
+    type: object
+    required:
+      - id
+      - title
+      - description
+      - tags
+      - status
+      - creationDate
+      - startDate
+      - endDate
+    properties:
+      id:
+        type: integer
+        description: Task id.
+        example: 42
+      title:
+        type: string
+        description: Task title.
+        example: Tast title
+      description:
+        type: string
+        description: Task description.
+        example: Task description
+      tags:
+        type: array
+        description: Task tags.
+        items:
+          $ref: '#/definitions/Tag'
+      status:
+        type: string
+        description: Task status.
+        enum:
+          - TO_DO
+          - IN_PROGRESS
+          - DONE
+      creationDate:
+        type: string
+        format: date
+        description: Task creation date.
+        example: '2012-04-23'
+      startDate:
+        type: string
+        format: date
+        description: Task start date.
+        example: '2012-04-23'
+      endDate:
+        type: string
+        format: date
+        description: Task end date.
+        example: '2012-04-23'
 
   # Tag definitions
   TagItems:
