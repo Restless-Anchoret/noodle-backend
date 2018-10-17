@@ -4,16 +4,23 @@ const passwordSchema = joi.string().min(8)
     .regex(/^.*[0-9].*$/, 'numbers')
     .regex(/^.*[a-zA-Z].*$/, 'latin letters');
 
+const nameSchema = joi.string().min(1).max(100);
+
 const postAccountSchema = {
     body: joi.object({
         login: joi.string().min(1).max(50).required(),
         password: passwordSchema.required(),
-        name: joi.string().min(1).max(100).required()
+        name: nameSchema.required()
     })
 };
 
-// todo
-const putAccountSchema = {};
+const putAccountSchema = {
+    body: joi.object({
+        name: nameSchema,
+        oldPassword: joi.string().min(1),
+        newPassword: passwordSchema
+    }).and('oldPassword', 'newPassword')
+};
 
 const signInSchema = {
     body: joi.object({

@@ -13,8 +13,28 @@ async function insertAccount (client, account) {
     await client.insert(account, 'account');
 }
 
+async function updateAccount (client, id, name, passwordHash) {
+    const params = [];
+    const querySetParts = [];
+
+    if (name) {
+        params.push(name);
+        querySetParts.push(`name = $${params.length}`);
+    }
+
+    if (passwordHash) {
+        params.push(passwordHash);
+        querySetParts.push(`password_hash = $${params.length}`);
+    }
+
+    params.push(id);
+    const query = `update account set ${querySetParts.join(', ')} where id = $${params.length}`;
+    await client.query(query, params);
+}
+
 module.exports = {
     getAccountById: getAccountById,
     getAccountByLogin: getAccountByLogin,
-    insertAccount: insertAccount
+    insertAccount: insertAccount,
+    updateAccount: updateAccount
 };

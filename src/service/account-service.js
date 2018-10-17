@@ -3,7 +3,11 @@ const jwt = require('../util/jwt');
 const db = require('../util/db/db');
 const accountDao = require('../dao/account-dao');
 const _ = require('lodash');
-const { LoginAlreadyUsedError, IncorrectLoginPasswordError } = require('../util/errors');
+const {
+    LoginAlreadyUsedError,
+    IncorrectLoginPasswordError,
+    IncorrectOldPasswordError
+} = require('../util/errors');
 
 const SALT_ROUNDS = 10;
 
@@ -37,7 +41,33 @@ async function registerAccount (context) {
 }
 
 async function updateAccount (context) {
-    // todo
+    const dto = context.body;
+    const accountId = context.jwtPayload.id;
+
+    if (!dto.name && !dto.newPassword) {
+        return findAndMapAccount(accountId);
+    }
+
+    const account = await accountDao.getAccountById(db, accountId);
+    const name = dto.name;
+    let passwordHash;
+
+    if (dto.newPassword) {
+        const hashMatch = await bcrypt.compare(dto.oldPassword, account.passwordHash);
+        if (!hashMatch) {
+            throw new IncorrectOldPasswordError();
+        }
+
+        passwordHash = await bcrypt.hash(dto.newPassword, SALT_ROUNDS);
+    }
+
+    await accountDao.updateAccount(db, accountId, name, passwordHash);
+    return findAndMapAccount(accountId);
+}
+
+async function findAndMapAccount (id) {
+    const account = await accountDao.getAccountById(db, id);
+    return mapAccount(account);
 }
 
 async function signIn (context) {
