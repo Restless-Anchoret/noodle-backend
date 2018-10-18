@@ -1,10 +1,11 @@
 const joi = require('joi');
+const { nonemptyStringSchema } = require('./common-schema');
 
-const nameSchema = joi.string().min(1).max(100);
+const titleSchema = nonemptyStringSchema.max(100);
 
 const postListSchema = {
     body: joi.object({
-        title: nameSchema.required()
+        title: titleSchema.required()
     })
 };
 

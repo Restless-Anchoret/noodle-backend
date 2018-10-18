@@ -1,4 +1,5 @@
 const joi = require('joi');
+const { idSchema, idStringSchema, nonemptyStringSchema } = require('./common-schema');
 
 const getTasksSchema = {
     query: joi.object({
@@ -8,15 +9,15 @@ const getTasksSchema = {
 
 const getTaskSchema = {
     params: joi.object({
-        // todo
+        id: idStringSchema.required()
     })
 };
 
 const postTaskSchema = {
     body: joi.object({
-        title: joi.string().min(1).max(400).required(),
-        parentTaskId: joi.number().integer().min(1),
-        listId: joi.number().integer().min(1)
+        title: nonemptyStringSchema.max(400).required(),
+        parentTaskId: idSchema,
+        listId: idSchema
     }).xor('parentTaskId', 'listId')
 };
 

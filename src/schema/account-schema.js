@@ -1,14 +1,15 @@
 const joi = require('joi');
+const { nonemptyStringSchema } = require('./common-schema');
 
 const passwordSchema = joi.string().min(8)
     .regex(/^.*[0-9].*$/, 'numbers')
     .regex(/^.*[a-zA-Z].*$/, 'latin letters');
 
-const nameSchema = joi.string().min(1).max(100);
+const nameSchema = nonemptyStringSchema.max(100);
 
 const postAccountSchema = {
     body: joi.object({
-        login: joi.string().min(1).max(50).required(),
+        login: nonemptyStringSchema.max(50).required(),
         password: passwordSchema.required(),
         name: nameSchema.required()
     })
@@ -17,15 +18,15 @@ const postAccountSchema = {
 const putAccountSchema = {
     body: joi.object({
         name: nameSchema,
-        oldPassword: joi.string().min(1),
+        oldPassword: nonemptyStringSchema,
         newPassword: passwordSchema
     }).and('oldPassword', 'newPassword')
 };
 
 const signInSchema = {
     body: joi.object({
-        login: joi.string().min(1).required(),
-        password: joi.string().min(1).required()
+        login: nonemptyStringSchema.required(),
+        password: nonemptyStringSchema.required()
     })
 };
 
