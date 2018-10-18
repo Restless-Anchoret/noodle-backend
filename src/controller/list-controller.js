@@ -1,6 +1,6 @@
-async function getLists (context) {
-    // todo
-}
+const listService = require('../service/list-service');
+const taskService = require('../service/task-service');
+const schema = require('../schema/list-schema');
 
 const controller = {
     url: '/lists',
@@ -10,8 +10,39 @@ const controller = {
             method: 'get',
             version: 1,
             secured: true,
-            validationSchema: {}, // todo: add schema
-            handler: getLists
+            handler: listService.getLists
+        },
+        {
+            url: '',
+            method: 'post',
+            version: 1,
+            secured: true,
+            validationSchema: schema.postListSchema,
+            handler: listService.createList
+        },
+        {
+            url: '/:id',
+            method: 'put',
+            version: 1,
+            secured: true,
+            validationSchema: schema.putListSchema,
+            handler: listService.updateList
+        },
+        {
+            url: '/:id',
+            method: 'delete',
+            version: 1,
+            secured: true,
+            validationSchema: schema.deleteListSchema,
+            handler: listService.deleteList
+        },
+        {
+            url: '/:id/tasks',
+            method: 'get',
+            version: 1,
+            secured: true,
+            validationSchema: schema.getListTasksSchema,
+            handler: taskService.getListTasks
         }
     ]
 };
