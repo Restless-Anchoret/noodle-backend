@@ -206,14 +206,90 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 
-#  /lists/{id}/tasks:
-#    get:
-#      todo
+  /lists/{id}/tasks:
+    get:
+      summary: Get list tasks
+      description: The system returns list task, showing tasks hierarchy.
+      security:
+        - Bearer: []
+      parameters:
+        - name: filter
+          in: query
+          description: Task filter option. Equals to "DONE_LESS_THAN_10_DAYS_AGO" by default.
+            When "done" task contains undone tasks, it will be included in result anyway.
+          required: false
+          type: string
+          enum:
+            - ALL
+            - DONE_LESS_THAN_10_DAYS_AGO
+            - ONLY_DONE
+      responses:
+        200:
+          description: Successful operation.
+          schema:
+            $ref: '#/definitions/TaskWithChildrenItems'
+        400:
+          description: |
+            * Code 1 - Request validation error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        401:
+          description: |
+            * Code 3 - Required JWT token is absent, invalid or expired.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
 
   # Task end points
   /tasks:
-#    get:
-#      todo
+    get:
+      summary: Get tasks with some filter
+      description: User sends task filters (lists, tags and statuses) and the system returns filtered tasks.
+      security:
+        - Bearer: []
+      parameters:
+        - name: list
+          in: query
+          description: Array of list ids to get tasks from.
+          required: false
+          type: array
+          items:
+            type: integer
+            description: List id.
+            example: 4
+        - name: tag
+          in: query
+          description: Array of tags to filter tags by.
+          required: false
+          type: array
+          items:
+            $ref: '#/definitions/Tag'
+        - name: status
+          in: query
+          description: Array of statuses to get tasks with.
+          required: false
+          type: array
+          items:
+            type: string
+            description: Task status.
+            enum:
+              - TO_DO
+              - IN_PROGRESS
+              - DONE
+      responses:
+        200:
+          description: Successful operation.
+          schema:
+            $ref: '#/definitions/TaskBriefItems'
+        400:
+          description: |
+            * Code 1 - Request validation error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        401:
+          description: |
+            * Code 3 - Required JWT token is absent, invalid or expired.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
     post:
       summary: Create a new task
       description: User sends new task title and parent task id or list id, the system creates a new task (subtask or root task correspondingly).
@@ -485,17 +561,13 @@ definitions:
         example: Title
 
   # Task definitions
-  Task:
+  TaskBrief:
     type: object
     required:
       - id
       - title
-      - description
       - tags
       - status
-      - creationDate
-      - startDate
-      - endDate
     properties:
       id:
         type: integer
@@ -505,10 +577,6 @@ definitions:
         type: string
         description: Task title.
         example: Tast title
-      description:
-        type: string
-        description: Task description.
-        example: Task description
       tags:
         type: array
         description: Task tags.
@@ -521,21 +589,65 @@ definitions:
           - TO_DO
           - IN_PROGRESS
           - DONE
-      creationDate:
-        type: string
-        format: date
-        description: Task creation date.
-        example: '2012-04-23'
-      startDate:
-        type: string
-        format: date
-        description: Task start date.
-        example: '2012-04-23'
-      endDate:
-        type: string
-        format: date
-        description: Task end date.
-        example: '2012-04-23'
+  TaskWithChildren:
+    type: object
+    allOf:
+      - $ref: '#/definitions/TaskBrief'
+      - required:
+          - children
+        properties:
+          children:
+            type: array
+            description: Task subtasks.
+            items:
+              $ref: '#/definitions/TaskWithChildren'
+  Task:
+    type: object
+    allOf:
+      - $ref: '#/definitions/TaskBrief'
+      - required:
+          - description
+          - creationDate
+          - startDate
+          - endDate
+        properties:
+          description:
+            type: string
+            description: Task description.
+            example: Task description
+          creationDate:
+            type: string
+            format: date
+            description: Task creation date.
+            example: '2012-04-23'
+          startDate:
+            type: string
+            format: date
+            description: Task start date.
+            example: '2012-04-23'
+          endDate:
+            type: string
+            format: date
+            description: Task end date.
+            example: '2012-04-23'
+  TaskBriefItems:
+    type: object
+    required:
+      - items
+    properties:
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/TaskBrief'
+  TaskWithChildrenItems:
+    type: object
+    required:
+      - items
+    properties:
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/TaskWithChildren'
   CreateTaskRequest:
     type: object
     required:
