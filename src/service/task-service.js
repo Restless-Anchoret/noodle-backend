@@ -17,9 +17,7 @@ async function getTaskById (context) {
     const taskId = +(context.params.id);
     const accountId = context.jwtPayload.id;
 
-    const task = await taskDao.getTaskById(db, taskId);
-    await listDao.getListByIdAndAccountId(db, task.listId, accountId);
-
+    const task = await taskDao.getTaskByIdAndAccountId(db, taskId, accountId);
     const taskTags = await tagDao.getTagsByTaskId(db, taskId);
     return mapTask(task, taskTags);
 }
@@ -46,8 +44,7 @@ async function prepareRootTaskObject (client, title, listId, accountId) {
 }
 
 async function prepareSubtaskObject (client, title, parentTaskId, accountId) {
-    const parentTask = await taskDao.getTaskById(client, parentTaskId);
-    await listDao.getListByIdAndAccountId(client, parentTask.listId, accountId);
+    const parentTask = await taskDao.getTaskByIdAndAccountId(client, parentTaskId, accountId);
     const subtasks = await taskDao.getTaskSubtasks(client, parentTaskId);
     return prepareNewTaskObject(title, parentTaskId, parentTask.listId, subtasks.length);
 }
@@ -70,6 +67,36 @@ function prepareNewTaskObject (title, parentTaskId, listId, index) {
 }
 
 async function updateTask (context) {
+    const dto = context.body;
+    const taskId = +(context.params.id);
+    const accountId = context.jwtPayload.id;
+
+    const { task, tags } = await db.transaction(async client => {
+        await accountDao.getAccountByIdForUpdate(client, accountId);
+        await taskDao.getTaskByIdAndAccountId(client, taskId, accountId);
+
+        await updateTaskProperties(client, taskId, dto);
+        await updateTaskTags(client, taskId, dto);
+
+        const updatedTask = await taskDao.getTaskByIdAndAccountId(client, taskId, accountId);
+        const tags = await tagDao.getTagsByTaskId(db, taskId);
+        return { task: updatedTask, tags: tags };
+    });
+
+    return mapTask(task, tags);
+}
+
+async function updateTaskProperties (client, taskId, dto) {
+    if (!dto.title && !dto.description && !dto.status) {
+        return;
+    }
+    await taskDao.updateTask(client, taskId, dto.title, dto.description, dto.status);
+}
+
+async function updateTaskTags (client, taskId, dto) {
+    if (!dto.tags) {
+        return;
+    }
     // todo
 }
 
