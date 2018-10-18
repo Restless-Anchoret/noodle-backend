@@ -18,6 +18,7 @@ const controller = {
             version: 1,
             secured: true,
             validationSchema: schema.getTaskSchema,
+            successStatus: 201,
             handler: taskService.getTaskById
         },
         {

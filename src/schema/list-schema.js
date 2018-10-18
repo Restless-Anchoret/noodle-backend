@@ -1,8 +1,10 @@
 const joi = require('joi');
 
+const nameSchema = joi.string().min(1).max(100);
+
 const postListSchema = {
     body: joi.object({
-        // todo
+        title: nameSchema.required()
     })
 };
 

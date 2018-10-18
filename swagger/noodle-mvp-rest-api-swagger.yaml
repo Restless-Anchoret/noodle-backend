@@ -479,7 +479,7 @@ definitions:
     required:
       - title
     properties:
-      login:
+      title:
         type: string
         description: List title. Minimum length is 1 symbol, maximum length is 100 symbols.
         example: Title

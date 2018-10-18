@@ -18,6 +18,7 @@ const controller = {
             version: 1,
             secured: true,
             validationSchema: schema.postListSchema,
+            successStatus: 201,
             handler: listService.createList
         },
         {

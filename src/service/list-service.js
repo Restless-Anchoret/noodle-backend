@@ -10,7 +10,17 @@ async function getLists (context) {
 }
 
 async function createList (context) {
-    // todo
+    const accountId = context.jwtPayload.id;
+    const dto = context.body;
+    const existingLists = await listDao.getListsByAccountId(db, accountId);
+
+    const newList = {
+        title: dto.title,
+        index: existingLists.length,
+        accountId: accountId
+    };
+    await listDao.insertList(db, newList);
+    return mapList(newList);
 }
 
 async function updateList (context) {

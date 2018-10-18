@@ -5,6 +5,11 @@ async function getListsByAccountId (client, accountId) {
         [accountId], dbUtils.mapFieldsToCamel);
 }
 
+async function insertList (client, list) {
+    await client.insert(list, 'list');
+}
+
 module.exports = {
-    getListsByAccountId: getListsByAccountId
+    getListsByAccountId: getListsByAccountId,
+    insertList: insertList
 };
