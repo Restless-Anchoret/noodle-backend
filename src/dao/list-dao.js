@@ -6,7 +6,7 @@ async function getListsByAccountId (client, accountId) {
 }
 
 async function getListByIdAndAccountId (client, listId, accountId) {
-    const results = client.query('select * from list where id = $1 and account_id = $2',
+    const results = await client.query('select * from list where id = $1 and account_id = $2',
         [listId, accountId], dbUtils.mapFieldsToCamel);
     return dbUtils.getOnly(results);
 }

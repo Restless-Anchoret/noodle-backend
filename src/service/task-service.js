@@ -22,7 +22,7 @@ async function createTask (context) {
     const task = await db.transaction(async client => {
         await accountDao.getAccountByIdForUpdate(client, accountId);
         const newTask = await (dto.listId ? prepareRootTaskObject(client, dto.title, dto.listId, accountId)
-            : prepareSubtaskObject(client, dto.title, dto.parentTaskId));
+            : prepareSubtaskObject(client, dto.title, dto.parentTaskId, accountId));
         await taskDao.insertTask(client, newTask);
         return newTask;
     });
@@ -36,8 +36,9 @@ async function prepareRootTaskObject (client, title, listId, accountId) {
     return prepareNewTaskObject(title, null, listId, rootTasks.length);
 }
 
-async function prepareSubtaskObject (client, title, parentTaskId) {
+async function prepareSubtaskObject (client, title, parentTaskId, accountId) {
     const parentTask = await taskDao.getTaskById(client, parentTaskId);
+    await listDao.getListByIdAndAccountId(client, parentTask.listId, accountId);
     const subtasks = await taskDao.getTaskSubtasks(client, parentTaskId);
     return prepareNewTaskObject(title, parentTaskId, parentTask.listId, subtasks.length);
 }
