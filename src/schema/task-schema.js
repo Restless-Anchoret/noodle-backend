@@ -14,8 +14,10 @@ const getTaskSchema = {
 
 const postTaskSchema = {
     body: joi.object({
-        // todo
-    })
+        title: joi.string().min(1).max(400).required(),
+        parentTaskId: joi.number().integer().min(1),
+        listId: joi.number().integer().min(1)
+    }).xor('parentTaskId', 'listId')
 };
 
 const putTaskSchema = {

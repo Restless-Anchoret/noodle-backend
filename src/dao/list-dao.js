@@ -5,11 +5,18 @@ async function getListsByAccountId (client, accountId) {
         [accountId], dbUtils.mapFieldsToCamel);
 }
 
+async function getListByIdAndAccountId (client, listId, accountId) {
+    const results = client.query('select * from list where id = $1 and account_id = $2',
+        [listId, accountId], dbUtils.mapFieldsToCamel);
+    return dbUtils.getOnly(results);
+}
+
 async function insertList (client, list) {
     await client.insert(list, 'list');
 }
 
 module.exports = {
     getListsByAccountId: getListsByAccountId,
+    getListByIdAndAccountId: getListByIdAndAccountId,
     insertList: insertList
 };
