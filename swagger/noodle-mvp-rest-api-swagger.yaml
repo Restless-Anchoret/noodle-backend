@@ -145,7 +145,7 @@ paths:
           schema:
             $ref: '#/definitions/ListRequest'
       responses:
-        200:
+        201:
           description: Successful operation.
           schema:
             $ref: '#/definitions/List'
@@ -211,11 +211,35 @@ paths:
 #      todo
 
   # Task end points
-#  /tasks:
+  /tasks:
 #    get:
 #      todo
-#    post:
-#      todo
+    post:
+      summary: Create a new task
+      description: User sends new task title and parent task id or list id, the system creates a new task (subtask or root task correspondingly).
+      security:
+        - Bearer: []
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateTaskRequest'
+      responses:
+        201:
+          description: Successful operation.
+          schema:
+            $ref: '#/definitions/Task'
+        400:
+          description: |
+            * Code 1 - Request validation error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        401:
+          description: |
+            * Code 3 - Required JWT token is absent, invalid or expired.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
 
   /tasks/{id}:
     get:
@@ -238,10 +262,50 @@ paths:
             * Code 3 - Required JWT token is absent, invalid or expired.
           schema:
             $ref: '#/definitions/ErrorResponse'
-#    put:
-#      todo
-#    delete:
-#      todo
+    put:
+      summary: Modify task
+      description: User sends new task title, description, tags and status, the system saves them.
+      security:
+        - Bearer: []
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ChangeTaskRequest'
+      responses:
+        200:
+          description: Successful operation.
+          schema:
+            $ref: '#/definitions/Task'
+        400:
+          description: |
+            * Code 1 - Request validation error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        401:
+          description: |
+            * Code 3 - Required JWT token is absent, invalid or expired.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    delete:
+      summary: Delete the task
+      description: The system deletes the task with all its subtasks.
+      security:
+        - Bearer: []
+      responses:
+        204:
+          description: Successful operation.
+        400:
+          description: |
+            * Code 1 - Request validation error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        401:
+          description: |
+            * Code 3 - Required JWT token is absent, invalid or expired.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
 
   # Tag end points
   /tags:
@@ -472,6 +536,46 @@ definitions:
         format: date
         description: Task end date.
         example: '2012-04-23'
+  CreateTaskRequest:
+    type: object
+    required:
+      - title
+    properties:
+      title:
+        type: string
+        description: Task title. Minimum length is 1 symbol, maximum length is 400 symbols.
+        example: Tast title
+      parentTaskId:
+        type: integer
+        description: Parent task id (in case of creation subtask).
+        example: 14
+      listId:
+        type: integer
+        description: List id (in case of creation root task).
+        example: 5
+  ChangeTaskRequest:
+    type: object
+    properties:
+      title:
+        type: string
+        description: Task title. Minimum length is 1 symbol, maximum length is 400 symbols.
+        example: Tast title
+      description:
+        type: string
+        description: Task description. Maximum length is 2000 symbols.
+        example: Task description
+      tags:
+        type: array
+        description: Task tags. Minimum length of each tag is 1 symbol, maximum length of each tag is 100 symbols.
+        items:
+          $ref: '#/definitions/Tag'
+      status:
+        type: string
+        description: Task status.
+        enum:
+        - TO_DO
+        - IN_PROGRESS
+        - DONE
 
   # Tag definitions
   TagItems:
