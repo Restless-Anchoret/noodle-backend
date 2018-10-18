@@ -2,6 +2,7 @@ const { Pool } = require('pg');
 const appContext = require('../application-context');
 const _ = require('lodash');
 const dbUtils = require('./utils');
+require('./types');
 const loggerFactory = require('../logger-factory');
 
 const log = loggerFactory.getLogger(__filename);
