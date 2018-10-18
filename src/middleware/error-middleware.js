@@ -7,6 +7,7 @@ function middleware (request, response, error) {
     if (!(error instanceof RestApiError)) {
         log.error('Unknown error', error);
         response.status(500);
+        response.send();
         return;
     }
 
