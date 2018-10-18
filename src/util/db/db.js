@@ -93,7 +93,7 @@ async function insertForClient (client, entity, table, returnId) {
 
     const query = getInsertQuery(entity, table, correctedReturnId);
     const params = getInsertParams(entity);
-    const result = await pool.query(query, params);
+    const result = await client.query(query, params);
 
     if (correctedReturnId) {
         entity.id = dbUtils.getOnly(result.rows).id;

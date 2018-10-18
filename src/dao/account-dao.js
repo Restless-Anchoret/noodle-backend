@@ -4,6 +4,11 @@ async function getAccountById (client, id) {
     return client.findById(id, 'account');
 }
 
+async function getAccountByIdForUpdate (client, id) {
+    const results = await client.query('select * from account where id = $1 for update', [id], dbUtils.mapFieldsToCamel);
+    return dbUtils.getOnly(results);
+}
+
 async function getAccountByLogin (client, login) {
     const results = await client.query('select * from account where login = $1', [login], dbUtils.mapFieldsToCamel);
     return dbUtils.getFirstOrNull(results);
@@ -34,6 +39,7 @@ async function updateAccount (client, id, name, passwordHash) {
 
 module.exports = {
     getAccountById: getAccountById,
+    getAccountByIdForUpdate: getAccountByIdForUpdate,
     getAccountByLogin: getAccountByLogin,
     insertAccount: insertAccount,
     updateAccount: updateAccount

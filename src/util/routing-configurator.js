@@ -60,6 +60,7 @@ function buildRequestContext (request) {
 function processResponse (response, requestResult, endPoint) {
     if (!requestResult) {
         response.status(204);
+        response.send('');
         return;
     }
 

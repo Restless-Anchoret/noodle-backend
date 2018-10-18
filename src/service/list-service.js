@@ -1,3 +1,4 @@
+const accountDao = require('../dao/account-dao');
 const listDao = require('../dao/list-dao');
 const _ = require('lodash');
 const db = require('../util/db/db');
@@ -12,14 +13,20 @@ async function getLists (context) {
 async function createList (context) {
     const accountId = context.jwtPayload.id;
     const dto = context.body;
-    const existingLists = await listDao.getListsByAccountId(db, accountId);
 
-    const newList = {
-        title: dto.title,
-        index: existingLists.length,
-        accountId: accountId
-    };
-    await listDao.insertList(db, newList);
+    const newList = await db.transaction(async client => {
+        await accountDao.getAccountByIdForUpdate(client, accountId);
+        const existingLists = await listDao.getListsByAccountId(client, accountId);
+
+        const newList = {
+            title: dto.title,
+            index: existingLists.length,
+            accountId: accountId
+        };
+        await listDao.insertList(client, newList);
+        return newList;
+    });
+
     return mapList(newList);
 }
 
