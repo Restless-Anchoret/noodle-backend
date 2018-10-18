@@ -30,7 +30,7 @@ const controller = {
             handler: taskService.createTask
         },
         {
-            url: '',
+            url: '/:id',
             method: 'put',
             version: 1,
             secured: true,

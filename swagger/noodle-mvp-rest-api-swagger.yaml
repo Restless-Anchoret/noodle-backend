@@ -222,7 +222,7 @@ paths:
           enum:
             - ALL
             - DONE_LESS_THAN_10_DAYS_AGO
-            - ONLY_DONE
+            - ONLY_UNDONE
       responses:
         200:
           description: Successful operation.
