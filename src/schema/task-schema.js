@@ -1,5 +1,9 @@
 const joi = require('joi');
-const { idSchema, idStringSchema, nonemptyStringSchema } = require('./common-schema');
+const { taskStatusValues } = require('./enum');
+const { idSchema, idParamsSchema } = require('./common-schema');
+
+const titleSchema = joi.string().max(400);
+const tagSchema = joi.string().max(100);
 
 const getTasksSchema = {
     query: joi.object({
@@ -8,32 +12,29 @@ const getTasksSchema = {
 };
 
 const getTaskSchema = {
-    params: joi.object({
-        id: idStringSchema.required()
-    })
+    params: idParamsSchema
 };
 
 const postTaskSchema = {
     body: joi.object({
-        title: nonemptyStringSchema.max(400).required(),
+        title: titleSchema.required(),
         parentTaskId: idSchema,
         listId: idSchema
     }).xor('parentTaskId', 'listId')
 };
 
 const putTaskSchema = {
-    params: joi.object({
-        // todo
-    }),
+    params: idParamsSchema,
     body: joi.object({
-        // todo
+        title: titleSchema,
+        description: joi.string().empty('').max(2000),
+        tags: joi.array().items(tagSchema),
+        status: joi.valid(taskStatusValues)
     })
 };
 
 const deleteTaskSchema = {
-    params: joi.object({
-        // todo
-    })
+    params: idParamsSchema
 };
 
 module.exports = {
