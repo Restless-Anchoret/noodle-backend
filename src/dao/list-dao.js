@@ -1,5 +1,10 @@
 const dbUtils = require('../util/db/utils');
 
-// todo
+async function getListsByAccountId (client, accountId) {
+    return client.query('select * from list where account_id = $1 order by index',
+        [accountId], dbUtils.mapFieldsToCamel);
+}
 
-module.exports = {};
+module.exports = {
+    getListsByAccountId: getListsByAccountId
+};
