@@ -18,7 +18,6 @@ const controller = {
             version: 1,
             secured: true,
             validationSchema: schema.getTaskSchema,
-            successStatus: 201,
             handler: taskService.getTaskById
         },
         {
@@ -27,6 +26,7 @@ const controller = {
             version: 1,
             secured: true,
             validationSchema: schema.postTaskSchema,
+            successStatus: 201,
             handler: taskService.createTask
         },
         {

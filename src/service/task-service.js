@@ -1,7 +1,9 @@
 const accountDao = require('../dao/account-dao');
 const taskDao = require('../dao/task-dao');
 const listDao = require('../dao/list-dao');
+const tagDao = require('../dao/tag-dao');
 const db = require('../util/db/db');
+const _ = require('lodash');
 
 async function getListTasks (context) {
     // todo
@@ -12,7 +14,14 @@ async function getTasks (context) {
 }
 
 async function getTaskById (context) {
-    // todo
+    const taskId = +(context.params.id);
+    const accountId = context.jwtPayload.id;
+
+    const task = await taskDao.getTaskById(db, taskId);
+    await listDao.getListByIdAndAccountId(db, task.listId, accountId);
+
+    const taskTags = await tagDao.getTagsByTaskId(db, taskId);
+    return mapTask(task, taskTags);
 }
 
 async function createTask (context) {
@@ -68,8 +77,8 @@ async function deleteTask (context) {
     // todo
 }
 
-function mapTask (task) {
-    return {
+function mapTask (task, tags) {
+    const mappedTask = {
         id: task.id,
         title: task.title,
         description: task.description,
@@ -79,6 +88,11 @@ function mapTask (task) {
         startDate: mapDate(task.startDate),
         endDate: mapDate(task.endDate)
     };
+
+    if (tags) {
+        mappedTask.tags = _.map(tags, tag => tag.name);
+    }
+    return mappedTask;
 }
 
 function mapDate (date) {
