@@ -1,5 +1,7 @@
 const accountDao = require('../dao/account-dao');
 const listDao = require('../dao/list-dao');
+const taskDao = require('../dao/task-dao');
+const tagDao = require('../dao/tag-dao');
 const _ = require('lodash');
 const db = require('../util/db/db');
 
@@ -48,7 +50,17 @@ async function updateList (context) {
 }
 
 async function deleteList (context) {
-    // todo
+    const accountId = context.jwtPayload.id;
+    const listId = +(context.params.id);
+
+    await db.transaction(async client => {
+        await accountDao.getAccountByIdForUpdate(client, accountId);
+        await listDao.getListByIdAndAccountId(client, listId, accountId);
+
+        await tagDao.deleteTagsFromList(client, listId);
+        await taskDao.deleteTasksFromList(client, listId);
+        await listDao.deleteList(client, listId);
+    });
 }
 
 function mapList (list) {

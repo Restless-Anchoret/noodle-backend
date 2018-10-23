@@ -25,10 +25,15 @@ async function updateList (client, listId, title) {
     await client.query('update list set title = $1 where id = $2', [title, listId]);
 }
 
+async function deleteList (client, listId) {
+    await client.query('delete from list where id = $1', [listId]);
+}
+
 module.exports = {
     getListsByAccountId: getListsByAccountId,
     getMaximumListIndexByAccountId: getMaximumListIndexByAccountId,
     getListByIdAndAccountId: getListByIdAndAccountId,
     insertList: insertList,
-    updateList: updateList
+    updateList: updateList,
+    deleteList: deleteList
 };

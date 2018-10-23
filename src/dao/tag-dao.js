@@ -21,10 +21,16 @@ async function deleteTaskTags (client, taskId) {
     await client.query('delete from tag where task_id = $1', [taskId]);
 }
 
+async function deleteTagsFromList (client, listId) {
+    await client.query('delete from tag where id in ' +
+        '(select tg.id from tag tg inner join task t on t.id = tg.task_id where t.list_id = $1)', [listId]);
+}
+
 module.exports = {
     getTagNamesByAccountId: getTagNamesByAccountId,
     getTagNamesByTaskId: getTagNamesByTaskId,
     deleteTaskTagsExceptFor: deleteTaskTagsExceptFor,
     addTaskTag: addTaskTag,
-    deleteTaskTags: deleteTaskTags
+    deleteTaskTags: deleteTaskTags,
+    deleteTagsFromList: deleteTagsFromList
 };
