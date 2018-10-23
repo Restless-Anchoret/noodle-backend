@@ -5,6 +5,12 @@ async function getListsByAccountId (client, accountId) {
         [accountId], dbUtils.mapFieldsToCamel);
 }
 
+async function getMaximumListIndexByAccountId (client, accountId) {
+    const results = await client.query('select max(index) as index from list where account_id = $1',
+        [accountId], result => +result.index);
+    return dbUtils.getOnly(results);
+}
+
 async function getListByIdAndAccountId (client, listId, accountId) {
     const results = await client.query('select * from list where id = $1 and account_id = $2',
         [listId, accountId], dbUtils.mapFieldsToCamel);
@@ -21,6 +27,7 @@ async function updateList (client, listId, title) {
 
 module.exports = {
     getListsByAccountId: getListsByAccountId,
+    getMaximumListIndexByAccountId: getMaximumListIndexByAccountId,
     getListByIdAndAccountId: getListByIdAndAccountId,
     insertList: insertList,
     updateList: updateList

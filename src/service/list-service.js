@@ -16,11 +16,11 @@ async function createList (context) {
 
     const newList = await db.transaction(async client => {
         await accountDao.getAccountByIdForUpdate(client, accountId);
-        const existingLists = await listDao.getListsByAccountId(client, accountId);
+        const newListIndex = await listDao.getMaximumListIndexByAccountId(client, accountId) + 1;
 
         const newList = {
             title: dto.title,
-            index: existingLists.length,
+            index: newListIndex,
             accountId: accountId
         };
         await listDao.insertList(client, newList);
