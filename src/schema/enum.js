@@ -1,3 +1,15 @@
+const env = {
+    dev: 'dev',
+    prod: 'prod',
+    test: 'test'
+};
+
+const envValues = [
+    env.dev,
+    env.prod,
+    env.test
+];
+
 const taskStatus = {
     toDo: 'TO_DO',
     inProgress: 'IN_PROGRESS',
@@ -23,6 +35,8 @@ const taskFilterValues = [
 ];
 
 module.exports = {
+    env: env,
+    envValues: envValues,
     taskStatus: taskStatus,
     taskStatusValues: taskStatusValues,
     taskFilter: taskFilter,

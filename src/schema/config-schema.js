@@ -1,4 +1,5 @@
 const joi = require('joi');
+const { envValues } = require('./enum');
 
 const configSchema = joi.object({
     db: joi.object({
@@ -17,7 +18,7 @@ const configSchema = joi.object({
         expiresIn: joi.string().required(),
         secret: joi.string().required()
     }).required(),
-    env: joi.string().allow(['dev', 'prod', 'test']).required()
+    env: joi.string().valid(envValues).required()
 });
 
 module.exports = {
