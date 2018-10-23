@@ -137,15 +137,27 @@ async function deleteTask (context) {
     await db.transaction(async client => {
         await accountDao.getAccountByIdForUpdate(client, accountId);
         const task = await taskDao.getTaskByIdAndAccountId(client, taskId, accountId);
+        await deleteTaskInDatabase(client, taskId);
 
-        await tagDao.deleteTaskTags(client, taskId);
-        await taskDao.deleteTask(client, taskId);
+        if (!task.parentTaskId) {
+            return;
+        }
 
         const leftSubtasks = await taskDao.getTaskSubtasks(client, task.parentTaskId);
         if (leftSubtasks.length === 0) {
             await taskDao.updateTaskHasChildren(client, task.parentTaskId, false);
         }
     });
+}
+
+async function deleteTaskInDatabase (client, taskId) {
+    const subtasks = await taskDao.getTaskSubtasks(client, taskId);
+    for (const subtask of subtasks) {
+        await deleteTaskInDatabase(client, subtask.id);
+    }
+
+    await tagDao.deleteTaskTags(client, taskId);
+    await taskDao.deleteTask(client, taskId);
 }
 
 function mapTask (task, tagNames) {
