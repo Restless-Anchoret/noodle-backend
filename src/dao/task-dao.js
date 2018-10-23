@@ -45,6 +45,10 @@ async function updateTask (client, id, title, description, status) {
     await client.query(query, params);
 }
 
+async function updateTaskHasChildren (client, id, hasChildren) {
+    await client.query('update task set has_children = $1 where id = $2', [hasChildren, id]);
+}
+
 async function deleteTask (client, taskId) {
     await client.query('delete from task where id = $1', [taskId]);
 }
@@ -55,5 +59,6 @@ module.exports = {
     getTaskSubtasks: getTaskSubtasks,
     insertTask: insertTask,
     updateTask: updateTask,
+    updateTaskHasChildren: updateTaskHasChildren,
     deleteTask: deleteTask
 };

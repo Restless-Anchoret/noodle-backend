@@ -28,8 +28,15 @@ async function createTask (context) {
 
     const task = await db.transaction(async client => {
         await accountDao.getAccountByIdForUpdate(client, accountId);
-        const newTask = await (dto.listId ? prepareRootTaskObject(client, dto.title, dto.listId, accountId)
-            : prepareSubtaskObject(client, dto.title, dto.parentTaskId, accountId));
+        let newTask;
+
+        if (dto.listId) {
+            newTask = await prepareRootTaskObject(client, dto.title, dto.listId, accountId);
+        } else {
+            newTask = await prepareSubtaskObject(client, dto.title, dto.parentTaskId, accountId);
+            await taskDao.updateTaskHasChildren(client, dto.parentTaskId, true);
+        }
+
         await taskDao.insertTask(client, newTask);
         return newTask;
     });
@@ -113,10 +120,15 @@ async function deleteTask (context) {
 
     await db.transaction(async client => {
         await accountDao.getAccountByIdForUpdate(client, accountId);
-        await taskDao.getTaskByIdAndAccountId(client, taskId, accountId);
+        const task = await taskDao.getTaskByIdAndAccountId(client, taskId, accountId);
 
         await tagDao.deleteTaskTags(client, taskId);
         await taskDao.deleteTask(client, taskId);
+
+        const leftSubtasks = await taskDao.getTaskSubtasks(client, task.parentTaskId);
+        if (leftSubtasks.length === 0) {
+            await taskDao.updateTaskHasChildren(client, task.parentTaskId, false);
+        }
     });
 }
 
