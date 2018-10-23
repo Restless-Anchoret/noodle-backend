@@ -1,5 +1,9 @@
 const dbUtils = require('../util/db/utils');
 
+async function getTaskById (client, taskId) {
+    return client.findById(taskId, 'task');
+}
+
 async function getTaskByIdAndAccountId (client, taskId, accountId) {
     const query = 'select t.* from task t inner join list l on l.id = t.list_id ' +
         'where t.id = $1 and l.account_id = $2';
@@ -80,6 +84,7 @@ async function deleteTasksFromList (client, listId) {
 }
 
 module.exports = {
+    getTaskById: getTaskById,
     getTaskByIdAndAccountId: getTaskByIdAndAccountId,
     getListRootTasks: getListRootTasks,
     getMaximumRootTaskIndex: getMaximumRootTaskIndex,

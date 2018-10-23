@@ -18,16 +18,37 @@ async function getTaskById (context) {
     const taskId = +(context.params.id);
     const accountId = context.jwtPayload.id;
 
-    const task = await taskDao.getTaskByIdAndAccountId(db, taskId, accountId);
-    const taskTagNames = await tagDao.getTagNamesByTaskId(db, taskId);
-    return mapTask(task, taskTagNames);
+    return getTaskByIdFromDatabase(db, taskId, accountId);
+}
+
+async function getTaskByIdFromDatabase (client, taskId, accountId) {
+    const task = await taskDao.getTaskByIdAndAccountId(client, taskId, accountId);
+    const taskTagNames = await tagDao.getTagNamesByTaskId(client, taskId);
+    const parents = await getTaskParentsHierarchy(client, task);
+    return mapTask(task, taskTagNames, parents);
+}
+
+async function getTaskParentsHierarchy (client, task) {
+    const parentTasks = [];
+    let currentTask = task;
+
+    while (currentTask.parentTaskId) {
+        const parentTask = await taskDao.getTaskById(db, currentTask.parentTaskId);
+        parentTasks.unshift({
+            id: parentTask.id,
+            title: parentTask.title
+        });
+        currentTask = parentTask;
+    }
+
+    return parentTasks;
 }
 
 async function createTask (context) {
     const dto = context.body;
     const accountId = context.jwtPayload.id;
 
-    const task = await db.transaction(async client => {
+    const { task, parents } = await db.transaction(async client => {
         await accountDao.getAccountByIdForUpdate(client, accountId);
         let newTask;
 
@@ -39,10 +60,11 @@ async function createTask (context) {
         }
 
         await taskDao.insertTask(client, newTask);
-        return newTask;
+        const parents = await getTaskParentsHierarchy(client, newTask);
+        return { task: newTask, parents: parents };
     });
 
-    return mapTask(task);
+    return mapTask(task, [], parents);
 }
 
 async function prepareRootTaskObject (client, title, listId, accountId) {
@@ -79,19 +101,15 @@ async function updateTask (context) {
     const taskId = +(context.params.id);
     const accountId = context.jwtPayload.id;
 
-    const { task, tagNames } = await db.transaction(async client => {
+    return db.transaction(async client => {
         await accountDao.getAccountByIdForUpdate(client, accountId);
         const task = await taskDao.getTaskByIdAndAccountId(client, taskId, accountId);
 
         await updateTaskProperties(client, task, dto);
         await updateTaskTags(client, taskId, dto);
 
-        const updatedTask = await taskDao.getTaskByIdAndAccountId(client, taskId, accountId);
-        const tagNames = await tagDao.getTagNamesByTaskId(client, taskId);
-        return { task: updatedTask, tagNames: tagNames };
+        return getTaskByIdFromDatabase(client, taskId, accountId);
     });
-
-    return mapTask(task, tagNames);
 }
 
 async function updateTaskProperties (client, task, dto) {
@@ -160,22 +178,18 @@ async function deleteTaskInDatabase (client, taskId) {
     await taskDao.deleteTask(client, taskId);
 }
 
-function mapTask (task, tagNames) {
-    const mappedTask = {
+function mapTask (task, tagNames, parentsHierarchy) {
+    return {
         id: task.id,
         title: task.title,
         description: task.description,
         status: task.status,
-        tags: [],
+        tags: tagNames,
         creationDate: mapDate(task.creationDate),
         startDate: mapDate(task.startDate),
-        endDate: mapDate(task.endDate)
+        endDate: mapDate(task.endDate),
+        parentsHierarchy: parentsHierarchy
     };
-
-    if (tagNames) {
-        mappedTask.tags = tagNames;
-    }
-    return mappedTask;
 }
 
 function mapDate (date) {
