@@ -108,7 +108,16 @@ async function updateTaskTags (client, taskId, dto) {
 }
 
 async function deleteTask (context) {
-    // todo
+    const taskId = +(context.params.id);
+    const accountId = context.jwtPayload.id;
+
+    await db.transaction(async client => {
+        await accountDao.getAccountByIdForUpdate(client, accountId);
+        await taskDao.getTaskByIdAndAccountId(client, taskId, accountId);
+
+        await tagDao.deleteTaskTags(client, taskId);
+        await taskDao.deleteTask(client, taskId);
+    });
 }
 
 function mapTask (task, tagNames) {

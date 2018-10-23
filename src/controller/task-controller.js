@@ -38,7 +38,7 @@ const controller = {
             handler: taskService.updateTask
         },
         {
-            url: '',
+            url: '/:id',
             method: 'delete',
             version: 1,
             secured: true,

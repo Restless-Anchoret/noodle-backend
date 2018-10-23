@@ -45,10 +45,15 @@ async function updateTask (client, id, title, description, status) {
     await client.query(query, params);
 }
 
+async function deleteTask (client, taskId) {
+    await client.query('delete from task where id = $1', [taskId]);
+}
+
 module.exports = {
     getTaskByIdAndAccountId: getTaskByIdAndAccountId,
     getListRootTasks: getListRootTasks,
     getTaskSubtasks: getTaskSubtasks,
     insertTask: insertTask,
-    updateTask: updateTask
+    updateTask: updateTask,
+    deleteTask: deleteTask
 };
