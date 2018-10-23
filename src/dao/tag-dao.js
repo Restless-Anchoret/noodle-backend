@@ -9,7 +9,17 @@ async function getTagNamesByTaskId (client, taskId) {
     return client.query('select name from tag where task_id = $1 order by name', [taskId], tag => tag.name);
 }
 
+async function deleteTaskTagsExceptFor (client, taskId, exceptTags) {
+    await client.query('delete from tag where task_id = $1 and name != all ($2)', [taskId, exceptTags]);
+}
+
+async function addTaskTag (client, taskId, newTag) {
+    await client.query('insert into tag(name, task_id) values ($1, $2)', [newTag, taskId]);
+}
+
 module.exports = {
     getTagNamesByAccountId: getTagNamesByAccountId,
-    getTagNamesByTaskId: getTagNamesByTaskId
+    getTagNamesByTaskId: getTagNamesByTaskId,
+    deleteTaskTagsExceptFor: deleteTaskTagsExceptFor,
+    addTaskTag: addTaskTag
 };

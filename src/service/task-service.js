@@ -79,8 +79,8 @@ async function updateTask (context) {
         await updateTaskTags(client, taskId, dto);
 
         const updatedTask = await taskDao.getTaskByIdAndAccountId(client, taskId, accountId);
-        const tagNames = await tagDao.getTagNamesByTaskId(db, taskId);
-        return { task: updatedTask, tags: tagNames };
+        const tagNames = await tagDao.getTagNamesByTaskId(client, taskId);
+        return { task: updatedTask, tagNames: tagNames };
     });
 
     return mapTask(task, tagNames);
@@ -97,7 +97,14 @@ async function updateTaskTags (client, taskId, dto) {
     if (!dto.tags) {
         return;
     }
-    // todo
+
+    await tagDao.deleteTaskTagsExceptFor(client, taskId, dto.tags);
+    const existingTagNames = await tagDao.getTagNamesByTaskId(db, taskId);
+    const filteredTagsToAdd = _.filter(dto.tags, tag => !existingTagNames.includes(tag));
+
+    for (const newTag of filteredTagsToAdd) {
+        await tagDao.addTaskTag(client, taskId, newTag);
+    }
 }
 
 async function deleteTask (context) {
