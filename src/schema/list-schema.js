@@ -1,4 +1,5 @@
 const joi = require('joi');
+const { idParamsSchema } = require('./common-schema');
 
 const titleSchema = joi.string().max(100);
 
@@ -9,27 +10,21 @@ const postListSchema = {
 };
 
 const putListSchema = {
-    params: joi.object({
-        // todo
-    }),
+    params: idParamsSchema,
     body: joi.object({
-        // todo
+        title: titleSchema.required()
     })
 };
 
 const deleteListSchema = {
-    params: joi.object({
-        // todo
-    })
+    params: idParamsSchema
 };
 
 const getListTasksSchema = {
     query: joi.object({
         // todo
     }),
-    params: joi.object({
-        // todo
-    })
+    params: idParamsSchema
 };
 
 module.exports = {

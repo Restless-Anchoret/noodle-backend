@@ -31,7 +31,20 @@ async function createList (context) {
 }
 
 async function updateList (context) {
-    // todo
+    const accountId = context.jwtPayload.id;
+    const listId = +(context.params.id);
+    const dto = context.body;
+
+    const updatedList = await db.transaction(async client => {
+        await accountDao.getAccountByIdForUpdate(client, accountId);
+        const list = await listDao.getListByIdAndAccountId(client, listId, accountId);
+        await listDao.updateList(client, listId, dto.title);
+
+        list.title = dto.title;
+        return list;
+    });
+
+    return mapList(updatedList);
 }
 
 async function deleteList (context) {

@@ -15,8 +15,13 @@ async function insertList (client, list) {
     await client.insert(list, 'list');
 }
 
+async function updateList (client, listId, title) {
+    await client.query('update list set title = $1 where id = $2', [title, listId]);
+}
+
 module.exports = {
     getListsByAccountId: getListsByAccountId,
     getListByIdAndAccountId: getListByIdAndAccountId,
-    insertList: insertList
+    insertList: insertList,
+    updateList: updateList
 };
