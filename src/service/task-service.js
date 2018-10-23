@@ -47,14 +47,14 @@ async function createTask (context) {
 
 async function prepareRootTaskObject (client, title, listId, accountId) {
     await listDao.getListByIdAndAccountId(client, listId, accountId);
-    const rootTasks = await taskDao.getListRootTasks(client, listId);
-    return prepareNewTaskObject(title, null, listId, rootTasks.length);
+    const newTaskIndex = await taskDao.getMaximumRootTaskIndex(client, listId) + 1;
+    return prepareNewTaskObject(title, null, listId, newTaskIndex);
 }
 
 async function prepareSubtaskObject (client, title, parentTaskId, accountId) {
     const parentTask = await taskDao.getTaskByIdAndAccountId(client, parentTaskId, accountId);
-    const subtasks = await taskDao.getTaskSubtasks(client, parentTaskId);
-    return prepareNewTaskObject(title, parentTaskId, parentTask.listId, subtasks.length);
+    const newTaskIndex = await taskDao.getMaximumSubtaskIndex(client, parentTaskId) + 1;
+    return prepareNewTaskObject(title, parentTaskId, parentTask.listId, newTaskIndex);
 }
 
 function prepareNewTaskObject (title, parentTaskId, listId, index) {

@@ -12,9 +12,21 @@ async function getListRootTasks (client, listId) {
         [listId], dbUtils.mapFieldsToCamel);
 }
 
+async function getMaximumRootTaskIndex (client, listId) {
+    const results = await client.query('select max(index) as index from task ' +
+        'where list_id = $1 and parent_task_id is null', [listId], result => +result.index);
+    return dbUtils.getOnly(results);
+}
+
 async function getTaskSubtasks (client, parentTaskId) {
     return client.query('select * from task where parent_task_id = $1 order by index',
         [parentTaskId], dbUtils.mapFieldsToCamel);
+}
+
+async function getMaximumSubtaskIndex (client, parentTaskId) {
+    const results = await client.query('select max(index) as index from task where parent_task_id = $1',
+        [parentTaskId], result => +result.index);
+    return dbUtils.getOnly(results);
 }
 
 async function insertTask (client, task) {
@@ -66,7 +78,9 @@ async function deleteTask (client, taskId) {
 module.exports = {
     getTaskByIdAndAccountId: getTaskByIdAndAccountId,
     getListRootTasks: getListRootTasks,
+    getMaximumRootTaskIndex: getMaximumRootTaskIndex,
     getTaskSubtasks: getTaskSubtasks,
+    getMaximumSubtaskIndex: getMaximumSubtaskIndex,
     insertTask: insertTask,
     updateTask: updateTask,
     updateTaskHasChildren: updateTaskHasChildren,
