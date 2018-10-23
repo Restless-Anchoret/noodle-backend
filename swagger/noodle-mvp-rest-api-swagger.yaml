@@ -561,13 +561,11 @@ definitions:
         example: Title
 
   # Task definitions
-  TaskBrief:
+  TaskTitle:
     type: object
     required:
       - id
       - title
-      - tags
-      - status
     properties:
       id:
         type: integer
@@ -577,18 +575,26 @@ definitions:
         type: string
         description: Task title.
         example: Tast title
-      tags:
-        type: array
-        description: Task tags.
-        items:
-          $ref: '#/definitions/Tag'
-      status:
-        type: string
-        description: Task status.
-        enum:
-          - TO_DO
-          - IN_PROGRESS
-          - DONE
+  TaskBrief:
+    type: object
+    allOf:
+      - $ref: '#/definitions/TaskTitle'
+      - required:
+          - tags
+          - status
+        properties:
+          tags:
+            type: array
+            description: Task tags.
+            items:
+              $ref: '#/definitions/Tag'
+          status:
+            type: string
+            description: Task status.
+            enum:
+              - TO_DO
+              - IN_PROGRESS
+              - DONE
   TaskWithChildren:
     type: object
     allOf:
@@ -610,6 +616,7 @@ definitions:
           - creationDate
           - startDate
           - endDate
+          - parentsHierarchy
         properties:
           description:
             type: string
@@ -630,6 +637,10 @@ definitions:
             format: date
             description: Task end date.
             example: '2012-04-23'
+          parentsHierarchy:
+            type: array
+            items:
+              $ref: '#/definitions/TaskTitle'
   TaskBriefItems:
     type: object
     required:
