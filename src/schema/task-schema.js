@@ -4,10 +4,16 @@ const { idSchema, idParamsSchema } = require('./common-schema');
 
 const titleSchema = joi.string().max(400);
 const tagSchema = joi.string().max(100);
+const taskStatusSchema = joi.string().valid(taskStatusValues);
 
 const getTasksSchema = {
     query: joi.object({
-        // todo
+        list: joi.alternatives().try(
+            idSchema, joi.array().items(idSchema)),
+        tag: joi.alternatives().try(
+            tagSchema, joi.array().items(tagSchema)),
+        status: joi.alternatives().try(
+            taskStatusSchema, joi.array().items(taskStatusSchema))
     })
 };
 
@@ -29,7 +35,7 @@ const putTaskSchema = {
         title: titleSchema,
         description: joi.string().empty('').max(2000),
         tags: joi.array().items(tagSchema),
-        status: joi.valid(taskStatusValues)
+        status: taskStatusSchema
     })
 };
 

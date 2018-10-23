@@ -1,5 +1,6 @@
 const joi = require('joi');
 const { idParamsSchema } = require('./common-schema');
+const { taskFilterValues } = require('./enum');
 
 const titleSchema = joi.string().max(100);
 
@@ -22,7 +23,7 @@ const deleteListSchema = {
 
 const getListTasksSchema = {
     query: joi.object({
-        // todo
+        filter: joi.string().valid(taskFilterValues)
     }),
     params: idParamsSchema
 };
