@@ -4,6 +4,7 @@ const listDao = require('../dao/list-dao');
 const tagDao = require('../dao/tag-dao');
 const db = require('../util/db/db');
 const _ = require('lodash');
+const { taskStatus } = require('../schema/enum');
 
 async function getListTasks (context) {
     // todo
@@ -60,7 +61,7 @@ function prepareNewTaskObject (title, parentTaskId, listId, index) {
     return {
         title: title,
         description: '',
-        status: 'TO_DO',
+        status: taskStatus.toDo,
         parentTaskId: parentTaskId,
         hasChildren: false,
         listId: listId,
@@ -80,9 +81,9 @@ async function updateTask (context) {
 
     const { task, tagNames } = await db.transaction(async client => {
         await accountDao.getAccountByIdForUpdate(client, accountId);
-        await taskDao.getTaskByIdAndAccountId(client, taskId, accountId);
+        const task = await taskDao.getTaskByIdAndAccountId(client, taskId, accountId);
 
-        await updateTaskProperties(client, taskId, dto);
+        await updateTaskProperties(client, task, dto);
         await updateTaskTags(client, taskId, dto);
 
         const updatedTask = await taskDao.getTaskByIdAndAccountId(client, taskId, accountId);
@@ -93,11 +94,26 @@ async function updateTask (context) {
     return mapTask(task, tagNames);
 }
 
-async function updateTaskProperties (client, taskId, dto) {
+async function updateTaskProperties (client, task, dto) {
     if (!dto.title && !dto.description && !dto.status) {
         return;
     }
-    await taskDao.updateTask(client, taskId, dto.title, dto.description, dto.status);
+
+    let startDate, endDate;
+    if (!task.startDate) {
+        startDate = getCurrentDateWithoutTime();
+    }
+    if (task.status !== taskStatus.done && dto.status === taskStatus.done) {
+        endDate = getCurrentDateWithoutTime();
+    }
+
+    await taskDao.updateTask(client, task.id, dto.title, dto.description, dto.status, startDate, endDate);
+}
+
+function getCurrentDateWithoutTime () {
+    const currentTime = new Date().getTime();
+    const correctedTime = currentTime - currentTime % (24 * 60 * 60 * 1000);
+    return new Date(correctedTime);
 }
 
 async function updateTaskTags (client, taskId, dto) {

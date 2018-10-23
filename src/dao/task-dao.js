@@ -21,7 +21,7 @@ async function insertTask (client, task) {
     return client.insert(task, 'task');
 }
 
-async function updateTask (client, id, title, description, status) {
+async function updateTask (client, id, title, description, status, startDate, endDate) {
     const params = [];
     const querySetParts = [];
 
@@ -38,6 +38,16 @@ async function updateTask (client, id, title, description, status) {
     if (status) {
         params.push(status);
         querySetParts.push(`status = $${params.length}`);
+    }
+
+    if (startDate) {
+        params.push(startDate);
+        querySetParts.push(`start_date = $${params.length}`);
+    }
+
+    if (endDate) {
+        params.push(endDate);
+        querySetParts.push(`end_date = $${params.length}`);
     }
 
     params.push(id);
