@@ -18,8 +18,8 @@ async function getTaskById (context) {
     const accountId = context.jwtPayload.id;
 
     const task = await taskDao.getTaskByIdAndAccountId(db, taskId, accountId);
-    const taskTags = await tagDao.getTagsByTaskId(db, taskId);
-    return mapTask(task, taskTags);
+    const taskTagNames = await tagDao.getTagNamesByTaskId(db, taskId);
+    return mapTask(task, taskTagNames);
 }
 
 async function createTask (context) {
@@ -71,7 +71,7 @@ async function updateTask (context) {
     const taskId = +(context.params.id);
     const accountId = context.jwtPayload.id;
 
-    const { task, tags } = await db.transaction(async client => {
+    const { task, tagNames } = await db.transaction(async client => {
         await accountDao.getAccountByIdForUpdate(client, accountId);
         await taskDao.getTaskByIdAndAccountId(client, taskId, accountId);
 
@@ -79,11 +79,11 @@ async function updateTask (context) {
         await updateTaskTags(client, taskId, dto);
 
         const updatedTask = await taskDao.getTaskByIdAndAccountId(client, taskId, accountId);
-        const tags = await tagDao.getTagsByTaskId(db, taskId);
-        return { task: updatedTask, tags: tags };
+        const tagNames = await tagDao.getTagNamesByTaskId(db, taskId);
+        return { task: updatedTask, tags: tagNames };
     });
 
-    return mapTask(task, tags);
+    return mapTask(task, tagNames);
 }
 
 async function updateTaskProperties (client, taskId, dto) {
@@ -104,7 +104,7 @@ async function deleteTask (context) {
     // todo
 }
 
-function mapTask (task, tags) {
+function mapTask (task, tagNames) {
     const mappedTask = {
         id: task.id,
         title: task.title,
@@ -116,8 +116,8 @@ function mapTask (task, tags) {
         endDate: mapDate(task.endDate)
     };
 
-    if (tags) {
-        mappedTask.tags = _.map(tags, tag => tag.name);
+    if (tagNames) {
+        mappedTask.tags = tagNames;
     }
     return mappedTask;
 }

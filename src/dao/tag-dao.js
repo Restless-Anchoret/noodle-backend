@@ -1,17 +1,15 @@
-const dbUtils = require('../util/db/utils');
-
-async function getTagsByAccountId (client, accountId) {
-    return client.query('select * from tag where account_id = $1 order by name',
-        [accountId], dbUtils.mapFieldsToCamel);
+async function getTagNamesByAccountId (client, accountId) {
+    return client.query('select distinct tg.name from tag tg ' +
+        'inner join task t on t.id = tg.task_id ' +
+        'inner join list l on l.id = t.list_id ' +
+        'where l.account_id = $1 order by tg.name', [accountId], tag => tag.name);
 }
 
-async function getTagsByTaskId (client, taskId) {
-    const query = 'select t.* from tag t inner join task_tag tt on tt.tag_id = t.id ' +
-        'where tt.task_id = $1 order by t.name';
-    return client.query(query, [taskId], dbUtils.mapFieldsToCamel);
+async function getTagNamesByTaskId (client, taskId) {
+    return client.query('select name from tag where task_id = $1 order by name', [taskId], tag => tag.name);
 }
 
 module.exports = {
-    getTagsByAccountId: getTagsByAccountId,
-    getTagsByTaskId: getTagsByTaskId
+    getTagNamesByAccountId: getTagNamesByAccountId,
+    getTagNamesByTaskId: getTagNamesByTaskId
 };

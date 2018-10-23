@@ -14,12 +14,6 @@ create table list (
   account_id integer not null references account(id)
 );
 
-create table tag (
-  id serial primary key,
-  name varchar(100) not null,
-  account_id integer not null references account(id)
-);
-
 create table task (
   id bigserial primary key,
   title varchar(400) not null,
@@ -37,8 +31,9 @@ create table task (
   check (status in ('TO_DO', 'IN_PROGRESS', 'DONE'))
 );
 
-create table task_tag (
-  task_id bigint not null references task(id),
-  tag_id integer not null references tag(id),
-  primary key(task_id, tag_id)
+
+create table tag (
+  id serial primary key,
+  name varchar(100) not null,
+  task_id integer not null references task(id)
 );
