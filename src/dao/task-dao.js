@@ -1,4 +1,5 @@
 const dbUtils = require('../util/db/utils');
+const _ = require('lodash');
 
 async function getTaskById (client, taskId) {
     return client.findById(taskId, 'task');
@@ -31,6 +32,36 @@ async function getMaximumSubtaskIndex (client, parentTaskId) {
     const results = await client.query('select max(index) as index from task where parent_task_id = $1',
         [parentTaskId], result => +result.index);
     return dbUtils.getOnly(results);
+}
+
+async function getTasks (client, listIds, tags, statuses) {
+    const tasks = [];
+    const collector = createTaskTagsCollector(tasks);
+
+    await client.query('select t.id as task_id, t.title, t.status, tg.name ' +
+        'from task t left join tag tg on tg.task_id = t.id ' +
+        'where t.list_id = any ($1) and t.status = any ($2) ' +
+        'order by t.creation_date desc', [listIds, statuses], collector);
+
+    return _.filter(tasks, task => {
+        return _.every(tags, tag => task.tags.includes(tag));
+    });
+}
+
+function createTaskTagsCollector (tasks) {
+    return row => {
+        if (tasks.length > 0 && tasks[tasks.length - 1].id === row['task_id']) {
+            tasks[tasks.length - 1].tags.push(row.name);
+            return;
+        }
+
+        tasks.push({
+            id: row['task_id'],
+            title: row.title,
+            status: row.status,
+            tags: row.name ? [row.name] : []
+        });
+    };
 }
 
 async function insertTask (client, task) {
@@ -90,6 +121,7 @@ module.exports = {
     getMaximumRootTaskIndex: getMaximumRootTaskIndex,
     getTaskSubtasks: getTaskSubtasks,
     getMaximumSubtaskIndex: getMaximumSubtaskIndex,
+    getTasks: getTasks,
     insertTask: insertTask,
     updateTask: updateTask,
     updateTaskHasChildren: updateTaskHasChildren,

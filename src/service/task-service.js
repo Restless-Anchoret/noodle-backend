@@ -11,7 +11,27 @@ async function getListTasks (context) {
 }
 
 async function getTasks (context) {
-    // todo
+    const accountId = context.jwtPayload.id;
+    const listIds = _.map(formatQueryParam(context.query.list), id => +id);
+    const tags = formatQueryParam(context.query.tag);
+    const statuses = formatQueryParam(context.query.status);
+
+    const accountLists = await listDao.getListsByAccountId(db, accountId);
+    const accountListIds = _.map(accountLists, list => list.id);
+    const filteredListIds = _.filter(listIds, id => accountListIds.includes(id));
+
+    const tasks = await taskDao.getTasks(db, filteredListIds, tags, statuses);
+    return { items: tasks };
+}
+
+function formatQueryParam (param) {
+    if (!param) {
+        return [];
+    } else if (Array.isArray(param)) {
+        return param;
+    } else {
+        return [param];
+    }
 }
 
 async function getTaskById (context) {

@@ -243,7 +243,8 @@ paths:
   /tasks:
     get:
       summary: Get tasks with some filter
-      description: User sends task filters (lists, tags and statuses) and the system returns filtered tasks.
+      description: User sends task filters (lists, tags and statuses) and the system returns filtered tasks,
+        ordered by task creation date descending.
       security:
         - Bearer: []
       parameters:
