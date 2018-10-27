@@ -5,7 +5,7 @@ info:
   version: '1.0'
   title: Noodle REST API
 basePath: /api/v1
-host: noodle-2d.com
+host: noodle-backend
 securityDefinitions:
   Bearer:
     type: apiKey
@@ -697,9 +697,9 @@ definitions:
         type: string
         description: Task status.
         enum:
-        - TO_DO
-        - IN_PROGRESS
-        - DONE
+          - TO_DO
+          - IN_PROGRESS
+          - DONE
 
   # Tag definitions
   TagItems:
