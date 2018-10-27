@@ -3,11 +3,70 @@ const taskDao = require('../dao/task-dao');
 const listDao = require('../dao/list-dao');
 const tagDao = require('../dao/tag-dao');
 const db = require('../util/db/db');
+const dates = require('../util/dates');
 const _ = require('lodash');
-const { taskStatus } = require('../schema/enum');
+const { taskStatus, taskFilter } = require('../schema/enum');
 
 async function getListTasks (context) {
-    // todo
+    const filter = context.query.filter || taskFilter.all;
+    const listId = context.params.id;
+
+    const taskTree = await getTasksSubtree(listId, null, filter);
+    return { items: taskTree };
+}
+
+async function getTasksSubtree (listId, parentTaskId, filter) {
+    console.log('Getting subtree for', parentTaskId);
+    const mappedTasks = [];
+    const foundTasks = await taskDao.getSubtasksByFilter(db, listId, parentTaskId, filter);
+
+    for (const foundTask of foundTasks) {
+        console.log('Processing task');
+        console.log(foundTask);
+        const taskBrief = mapTaskBrief(foundTask);
+
+        if (!foundTask.hasChildren) {
+            mappedTasks.push(taskBrief);
+            console.log('Task has not any children');
+            continue;
+        }
+
+        taskBrief.children = await getTasksSubtree(listId, foundTask.id, filter);
+        if (taskBrief.children.length > 0) {
+            mappedTasks.push(taskBrief);
+            console.log('Task has not any matching children');
+            continue;
+        }
+
+        if (taskMatchesFilter(foundTask, filter)) {
+            mappedTasks.push(taskBrief);
+            console.log('Task with children matches criteria');
+        }
+
+        console.log('Task with children does not match criteria');
+    }
+
+    return mappedTasks;
+}
+
+function mapTaskBrief (task) {
+    const mappedTask = _.clone(task);
+    mappedTask.hasChildren = undefined;
+    mappedTask.endDate = undefined;
+    mappedTask.children = [];
+    return mappedTask;
+}
+
+function taskMatchesFilter (task, filter) {
+    if (filter === taskFilter.all) {
+        return true;
+    }
+
+    if (filter === taskFilter.onlyUndone) {
+        return task.endDate === null;
+    }
+
+    return task.endDate > dates.addDays(new Date(), -10);
 }
 
 async function getTasks (context) {
@@ -141,19 +200,13 @@ async function updateTaskProperties (client, task, dto) {
     let endDate = null;
 
     if (!task.startDate && dto.status !== taskStatus.toDo) {
-        startDate = getCurrentDateWithoutTime();
+        startDate = dates.getCurrentDateWithoutTime();
     }
     if (task.status !== taskStatus.done && dto.status === taskStatus.done) {
-        endDate = getCurrentDateWithoutTime();
+        endDate = dates.getCurrentDateWithoutTime();
     }
 
     await taskDao.updateTask(client, task.id, dto.title, dto.description, dto.status, startDate, endDate);
-}
-
-function getCurrentDateWithoutTime () {
-    const currentTime = new Date().getTime();
-    const correctedTime = currentTime - currentTime % (24 * 60 * 60 * 1000);
-    return new Date(correctedTime);
 }
 
 async function updateTaskTags (client, taskId, dto) {

@@ -1,4 +1,5 @@
 const dbUtils = require('../util/db/utils');
+const { taskFilter } = require('../schema/enum');
 const _ = require('lodash');
 
 async function getTaskById (client, taskId) {
@@ -12,9 +13,33 @@ async function getTaskByIdAndAccountId (client, taskId, accountId) {
     return dbUtils.getOnly(results);
 }
 
-async function getListRootTasks (client, listId) {
-    return client.query('select * from task where list_id = $1 and parent_task_id is null order by index',
-        [listId], dbUtils.mapFieldsToCamel);
+async function getSubtasksByFilter (client, listId, parentTaskId, filter) {
+    const tasks = [];
+    const collector = createTaskTagsCollector(tasks);
+
+    const params = [listId];
+    const queryWhereParts = ['t.list_id = $1'];
+
+    if (parentTaskId) {
+        params.push(parentTaskId);
+        queryWhereParts.push('t.parent_task_id = $2');
+    } else {
+        queryWhereParts.push('t.parent_task_id is null');
+    }
+
+    if (filter === taskFilter.onlyUndone) {
+        queryWhereParts.push('(t.has_children or t.end_date is null)');
+    } else if (filter === taskFilter.doneLessThen10Days) {
+        queryWhereParts.push('(t.has_children or t.end_date is null or t.end_date > now() - interval \'10 days\')');
+    }
+
+    const query = 'select t.id as task_id, t.title, t.status, t.has_children, t.end_date, tg.name ' +
+        'from task t left join tag tg on tg.task_id = t.id ' +
+        'where ' + queryWhereParts.join(' and ') + ' ' +
+        'order by t.index asc';
+
+    await client.query(query, params, collector);
+    return tasks;
 }
 
 async function getMaximumRootTaskIndex (client, listId) {
@@ -59,6 +84,8 @@ function createTaskTagsCollector (tasks) {
             id: row['task_id'],
             title: row.title,
             status: row.status,
+            hasChildren: row['has_children'],
+            endDate: row['end_date'],
             tags: row.name ? [row.name] : []
         });
     };
@@ -117,7 +144,7 @@ async function deleteTasksFromList (client, listId) {
 module.exports = {
     getTaskById: getTaskById,
     getTaskByIdAndAccountId: getTaskByIdAndAccountId,
-    getListRootTasks: getListRootTasks,
+    getSubtasksByFilter: getSubtasksByFilter,
     getMaximumRootTaskIndex: getMaximumRootTaskIndex,
     getTaskSubtasks: getTaskSubtasks,
     getMaximumSubtaskIndex: getMaximumSubtaskIndex,
