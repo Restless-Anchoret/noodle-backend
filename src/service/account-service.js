@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('../util/jwt');
 const db = require('../util/db/db');
 const accountDao = require('../dao/account-dao');
