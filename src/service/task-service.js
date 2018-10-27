@@ -137,7 +137,9 @@ async function updateTaskProperties (client, task, dto) {
         return;
     }
 
-    let startDate, endDate;
+    let startDate;
+    let endDate = null;
+
     if (!task.startDate && dto.status !== taskStatus.toDo) {
         startDate = getCurrentDateWithoutTime();
     }

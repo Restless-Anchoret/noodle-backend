@@ -87,12 +87,12 @@ async function updateTask (client, id, title, description, status, startDate, en
         querySetParts.push(`status = $${params.length}`);
     }
 
-    if (startDate) {
+    if (startDate !== undefined) {
         params.push(startDate);
         querySetParts.push(`start_date = $${params.length}`);
     }
 
-    if (endDate) {
+    if (endDate !== undefined) {
         params.push(endDate);
         querySetParts.push(`end_date = $${params.length}`);
     }
