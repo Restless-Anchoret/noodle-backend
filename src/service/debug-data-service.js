@@ -5,6 +5,7 @@ const taskDao = require('../dao/task-dao');
 const taskService = require('../service/task-service');
 const appContext = require('../util/application-context');
 const db = require('../util/db/db');
+const dates = require('../util/dates');
 const { env, taskStatus } = require('../schema/enum');
 const loggerFactory = require('../util/logger-factory');
 
@@ -117,13 +118,11 @@ async function correctTaskDates (task, status, daysAfterEndDate) {
         return;
     }
 
-    const currentDateTime = new Date().getTime();
-    const dayMillis = 1000 * 60 * 60 * 24;
-    const startDate = new Date(currentDateTime - currentDateTime % dayMillis);
-
+    let startDate = dates.getCurrentDateWithoutTime();
     let endDate;
+
     if (daysAfterEndDate) {
-        endDate = new Date(startDate.getTime() - dayMillis * daysAfterEndDate);
+        startDate = endDate = dates.addDays(startDate, -daysAfterEndDate);
     }
 
     await taskDao.updateTask(db, task.id, undefined, undefined, undefined, startDate, endDate);
