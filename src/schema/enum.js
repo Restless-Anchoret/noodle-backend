@@ -1,11 +1,13 @@
 const env = {
     dev: 'dev',
+    devDocker: 'dev-docker',
     prod: 'prod',
     test: 'test'
 };
 
 const envValues = [
     env.dev,
+    env.devDocker,
     env.prod,
     env.test
 ];

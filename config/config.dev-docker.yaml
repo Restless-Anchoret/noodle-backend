@@ -1,0 +1,13 @@
+db:
+  host: noodle-pg
+  port: 5432
+  database: noodle
+  user: user
+  password: password
+  minConnections: 1
+  maxConnections: 20
+http:
+  port: 8080
+jwt:
+  expiresIn: 10d
+  secret: akljsd;kfjalkjerpigjcnsjbhapukehrghw[oi5tjhg987dye857y4uahgjfdhagpkhe4hu

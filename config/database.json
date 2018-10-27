@@ -8,6 +8,15 @@
     "database": "noodle"
   },
 
+  "dev-docker": {
+    "driver": "pg",
+    "user": "user",
+    "password": "password",
+    "host": "noodle-pg",
+    "port": 5432,
+    "database": "noodle"
+  },
+
   "prod": {
     "driver": "pg",
     "user": "user",

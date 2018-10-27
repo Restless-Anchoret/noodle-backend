@@ -19,7 +19,7 @@ const TAGS = ['Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5'];
 const ADDITIONAL_TAGS = ['!!!', '?'];
 
 async function populateDebugData () {
-    if (appContext.config.env !== env.dev) {
+    if (![env.dev, env.devDocker].includes(appContext.config.env)) {
         return false;
     }
 
