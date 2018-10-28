@@ -1,5 +1,5 @@
 db:
-  host: localhost
+  host: noodle-pg-test
   port: 5433
   database: noodle
   user: user

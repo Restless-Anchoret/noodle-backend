@@ -4,14 +4,16 @@ const env = {
     dev: 'dev',
     devDocker: 'dev-docker',
     prod: 'prod',
-    test: 'test'
+    test: 'test',
+    testDocker: 'test-docker'
 };
 
 const envValues = [
     env.dev,
     env.devDocker,
     env.prod,
-    env.test
+    env.test,
+    env.testDocker
 ];
 
 const taskStatus = {
