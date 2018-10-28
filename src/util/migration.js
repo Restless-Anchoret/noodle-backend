@@ -1,3 +1,5 @@
+'use strict';
+
 const dbMigrate = require('db-migrate');
 const appContext = require('./application-context');
 const loggerFactory = require('./logger-factory');

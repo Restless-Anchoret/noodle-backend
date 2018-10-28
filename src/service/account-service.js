@@ -1,3 +1,5 @@
+'use strict';
+
 const bcrypt = require('bcryptjs');
 const jwt = require('../util/jwt');
 const db = require('../util/db/db');

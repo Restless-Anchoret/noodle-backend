@@ -1,3 +1,5 @@
+'use strict';
+
 const packageJson = require('../../package');
 
 async function getVersion () {

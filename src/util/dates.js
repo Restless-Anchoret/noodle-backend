@@ -1,3 +1,5 @@
+'use strict';
+
 const DAY_MILLIS = 24 * 60 * 60 * 1000;
 
 function getCurrentDateWithoutTime () {

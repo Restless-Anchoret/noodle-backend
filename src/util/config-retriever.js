@@ -1,3 +1,5 @@
+'use strict';
+
 const fs = require('fs-extra');
 const yaml = require('js-yaml');
 const joi = require('joi');

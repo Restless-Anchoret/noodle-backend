@@ -1,3 +1,5 @@
+'use strict';
+
 const accountController = require('./account-controller');
 const listController = require('./list-controller');
 const taskController = require('./task-controller');

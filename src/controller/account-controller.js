@@ -1,3 +1,5 @@
+'use strict';
+
 const accountService = require('../service/account-service');
 const schema = require('../schema/account-schema');
 

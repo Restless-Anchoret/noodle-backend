@@ -1,3 +1,5 @@
+'use strict';
+
 const configRetriever = require('./util/config-retriever');
 const migration = require('./util/migration');
 const debugDataService = require('./service/debug-data-service');

@@ -1,3 +1,5 @@
+'use strict';
+
 const versionService = require('../service/version-service');
 
 const controller = {

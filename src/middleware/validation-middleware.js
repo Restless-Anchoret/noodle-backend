@@ -1,3 +1,5 @@
+'use strict';
+
 const joi = require('joi');
 const { ValidationError } = require('../util/errors');
 const loggerFactory = require('../util/logger-factory');

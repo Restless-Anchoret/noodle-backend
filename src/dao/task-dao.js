@@ -1,3 +1,5 @@
+'use strict';
+
 const dbUtils = require('../util/db/utils');
 const { taskFilter } = require('../schema/enum');
 const _ = require('lodash');

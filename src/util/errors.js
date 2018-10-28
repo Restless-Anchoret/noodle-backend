@@ -1,3 +1,5 @@
+'use strict';
+
 class RestApiError {
     constructor (name, message, httpCode) {
         this.name = name;

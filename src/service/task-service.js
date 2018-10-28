@@ -1,3 +1,5 @@
+'use strict';
+
 const accountDao = require('../dao/account-dao');
 const taskDao = require('../dao/task-dao');
 const listDao = require('../dao/list-dao');

@@ -1,3 +1,5 @@
+'use strict';
+
 async function getTagNamesByAccountId (client, accountId) {
     return client.query('select distinct tg.name from tag tg ' +
         'inner join task t on t.id = tg.task_id ' +

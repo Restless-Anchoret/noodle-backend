@@ -1,3 +1,5 @@
+'use strict';
+
 const tagDao = require('../dao/tag-dao');
 const db = require('../util/db/db');
 

@@ -1,3 +1,5 @@
+'use strict';
+
 const { RestApiError, RestApi4xxError } = require('../util/errors');
 const loggerFactory = require('../util/logger-factory');
 

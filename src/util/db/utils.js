@@ -1,3 +1,5 @@
+'use strict';
+
 const { ResourceNotFoundError } = require('../errors');
 
 function getOnly (results) {

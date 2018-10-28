@@ -1,3 +1,5 @@
+'use strict';
+
 const taskService = require('../service/task-service');
 const schema = require('../schema/task-schema');
 

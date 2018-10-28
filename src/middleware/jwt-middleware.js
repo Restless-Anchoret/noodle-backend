@@ -1,3 +1,5 @@
+'use strict';
+
 const jwt = require('../util/jwt');
 const { JwtTokenError } = require('../util/errors');
 const loggerFactory = require('../util/logger-factory');

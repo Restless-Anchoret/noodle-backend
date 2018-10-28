@@ -1,3 +1,5 @@
+'use strict';
+
 const tagService = require('../service/tag-service');
 
 const controller = {

@@ -1,3 +1,5 @@
+'use strict';
+
 const env = {
     dev: 'dev',
     devDocker: 'dev-docker',

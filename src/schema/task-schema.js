@@ -1,3 +1,5 @@
+'use strict';
+
 const joi = require('joi');
 const { taskStatusValues } = require('./enum');
 const { idSchema, idParamsSchema } = require('./common-schema');

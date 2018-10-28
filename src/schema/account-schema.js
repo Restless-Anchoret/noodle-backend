@@ -1,3 +1,5 @@
+'use strict';
+
 const joi = require('joi');
 
 const passwordSchema = joi.string().min(8)

@@ -1,3 +1,5 @@
+'use strict';
+
 const dbUtils = require('../util/db/utils');
 
 async function getAccountById (client, id) {
