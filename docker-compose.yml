@@ -20,7 +20,7 @@ services:
       - 8080:8080
     image: noodle-backend
     volumes:
-      - ./:/usr/app
+      - ./config:/usr/app/config
     environment:
       - NODE_ENV=dev-docker
     command: npm start
