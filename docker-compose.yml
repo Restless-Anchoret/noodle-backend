@@ -38,7 +38,6 @@ services:
       - ./swagger:/swagger
     links:
       - noodle-backend
-      # todo: find out how to make noodle-backend host visible for swagger on html-page
 
 networks:
   default:

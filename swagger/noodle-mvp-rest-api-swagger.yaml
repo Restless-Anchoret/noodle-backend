@@ -5,7 +5,13 @@ info:
   version: '1.0'
   title: Noodle REST API
 basePath: /api/v1
-host: noodle-backend
+host: localhost:8080
+tags:
+  - name: Account
+  - name: Lists
+  - name: Tasks
+  - name: Tags
+  - name: System
 securityDefinitions:
   Bearer:
     type: apiKey
@@ -22,6 +28,8 @@ paths:
   # Account end points
   /account:
     get:
+      tags:
+        - Account
       summary: Get current account info
       description: Returns id, login and name of currently authenticated account.
       security:
@@ -37,6 +45,8 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
     post:
+      tags:
+        - Account
       summary: Register in the system
       description: User sends new login, name and password to the system and it registers a new account.
       parameters:
@@ -57,6 +67,8 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
     put:
+      tags:
+        - Account
       summary: Change account name and password
       description: User sends new name, old password and new password to the system and it changes his account.
         Name or passwords can be absent in the request, the system will change only present fields.
@@ -92,6 +104,8 @@ paths:
 
   /account/sign-in:
     post:
+      tags:
+        - Account
       summary: Sign in the system
       description: User sends login and password to the system and it returns his name and JWT token.
       parameters:
@@ -119,6 +133,8 @@ paths:
   #List end points
   /lists:
     get:
+      tags:
+        - Lists
       summary: Get user lists
       description: The system returns lists of currently authenticated user.
       security:
@@ -134,6 +150,8 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
     post:
+      tags:
+        - Lists
       summary: Create a new list
       description: User sends new list title, and the system create new list.
       security:
@@ -162,11 +180,18 @@ paths:
 
   /lists/{id}:
     put:
+      tags:
+        - Lists
       summary: Modify the list
       description: User sends new list name, and the system renames the list.
       security:
         - Bearer: []
       parameters:
+        - name: id
+          in: path
+          description: List id.
+          required: true
+          type: integer
         - name: body
           in: body
           required: true
@@ -188,10 +213,18 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
     delete:
+      tags:
+        - Lists
       summary: Delete the list
       description: The system deletes the list with all its tasks.
       security:
         - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: List id.
+          required: true
+          type: integer
       responses:
         204:
           description: Successful operation.
@@ -208,11 +241,18 @@ paths:
 
   /lists/{id}/tasks:
     get:
+      tags:
+        - Lists
       summary: Get list tasks
       description: The system returns list task, showing tasks hierarchy.
       security:
         - Bearer: []
       parameters:
+        - name: id
+          in: path
+          description: List id.
+          required: true
+          type: integer
         - name: filter
           in: query
           description: Task filter option. Equals to "DONE_LESS_THAN_10_DAYS_AGO" by default.
@@ -242,6 +282,8 @@ paths:
   # Task end points
   /tasks:
     get:
+      tags:
+        - Tasks
       summary: Get tasks with some filter
       description: User sends task filters (lists, tags and statuses) and the system returns filtered tasks,
         ordered by task creation date descending.
@@ -292,6 +334,8 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
     post:
+      tags:
+        - Tasks
       summary: Create a new task
       description: User sends new task title and parent task id or list id, the system creates a new task (subtask or root task correspondingly).
       security:
@@ -320,10 +364,18 @@ paths:
 
   /tasks/{id}:
     get:
+      tags:
+        - Tasks
       summary: Get detailed task info
       description: The system returns detailed task info with its status, title, description, tags and creation, start, end dates.
       security:
         - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: Task id.
+          required: true
+          type: integer
       responses:
         200:
           description: Successful operation.
@@ -340,11 +392,18 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
     put:
+      tags:
+        - Tasks
       summary: Modify task
       description: User sends new task title, description, tags and status, the system saves them.
       security:
         - Bearer: []
       parameters:
+        - name: id
+          in: path
+          description: Task id.
+          required: true
+          type: integer
         - name: body
           in: body
           required: true
@@ -366,10 +425,18 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
     delete:
+      tags:
+        - Tasks
       summary: Delete the task
       description: The system deletes the task with all its subtasks.
       security:
         - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: Task id.
+          required: true
+          type: integer
       responses:
         204:
           description: Successful operation.
@@ -387,6 +454,8 @@ paths:
   # Tag end points
   /tags:
     get:
+      tags:
+        - Tags
       summary: Get list of user tags
       description: The system returns the list of currently authenticated user tags.
       security:
@@ -405,6 +474,8 @@ paths:
   # Version end points
   /version:
     get:
+      tags:
+        - System
       summary: Get server version
       description: Version matches _Semver_ specification.
       responses:
