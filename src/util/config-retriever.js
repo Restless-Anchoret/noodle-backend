@@ -9,10 +9,10 @@ const loggerFactory = require('./logger-factory');
 
 const log = loggerFactory.getLogger(__filename);
 
-async function retrieveConfig () {
+async function retrieveConfig (defaultEnv) {
     log.info('Reading config');
 
-    const env = getEnv();
+    const env = getEnv(defaultEnv);
     log.debug('Environment:', env);
 
     const config = await parseConfig(env);
@@ -26,8 +26,9 @@ async function retrieveConfig () {
     log.debug('Config was put into application context');
 }
 
-function getEnv () {
-    return process.env['NODE_ENV'] || 'dev';
+function getEnv (defaultEnv) {
+    const actualDefaultEnv = defaultEnv || 'dev';
+    return process.env['NODE_ENV'] || actualDefaultEnv;
 }
 
 async function parseConfig (env) {

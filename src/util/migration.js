@@ -6,9 +6,21 @@ const loggerFactory = require('./logger-factory');
 
 const log = loggerFactory.getLogger(__filename);
 
-async function runMigration () {
-    log.info('Database migration started');
+async function up () {
+    log.info('Database migration up started');
+    const dbMigrateInstance = getDbMigrateInstance();
+    await dbMigrateInstance.up();
+    log.info('Database migration up finished');
+}
 
+async function reset () {
+    log.info('Database migration reset started');
+    const dbMigrateInstance = getDbMigrateInstance();
+    await dbMigrateInstance.reset();
+    log.info('Database migration reset finished');
+}
+
+function getDbMigrateInstance () {
     const config = appContext.config;
     const dbMigrateConfig = {
         config: {},
@@ -24,11 +36,10 @@ async function runMigration () {
         database: config.db.database
     };
 
-    const dbMigrateInstance = dbMigrate.getInstance(true, dbMigrateConfig);
-    await dbMigrateInstance.up();
-    log.info('Database migration finished');
+    return dbMigrate.getInstance(true, dbMigrateConfig);
 }
 
 module.exports = {
-    run: runMigration
+    up: up,
+    reset: reset
 };

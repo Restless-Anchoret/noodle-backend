@@ -3,6 +3,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
+const http = require('http');
 const controllerRegistry = require('../controller/registry');
 const appContext = require('./application-context');
 const jwtMiddleware = require('../middleware/jwt-middleware');
@@ -11,30 +12,31 @@ const validationMiddleware = require('../middleware/validation-middleware');
 const loggerFactory = require('./logger-factory');
 
 const log = loggerFactory.getLogger(__filename);
+const app = express();
+let server;
 
 async function configureRouting () {
     log.info('Routing configuration started');
 
-    const app = express();
     app.use(express.json());
     app.use(helmet());
     app.use(cors());
 
-    configureControllers(app, controllerRegistry.controllers);
-    await listenPort(app, appContext.config.http.port);
+    configureControllers(controllerRegistry.controllers);
+    await listenPort(appContext.config.http.port);
 
     log.info('Routing configuration finished');
 }
 
-function configureControllers (app, controllers) {
+function configureControllers (controllers) {
     controllers.forEach(controller => {
         controller.endPoints.forEach(endPoint => {
-            configureEndPoint(app, controller, endPoint);
+            configureEndPoint(controller, endPoint);
         });
     });
 }
 
-function configureEndPoint (app, controller, endPoint) {
+function configureEndPoint (controller, endPoint) {
     const url = `/api/v${endPoint.version}${controller.url}${endPoint.url}`;
     app[endPoint.method](url, (request, response) => {
         log.debug('Request to:', endPoint.method, request.url);
@@ -72,9 +74,10 @@ function processResponse (response, requestResult, endPoint) {
     response.json(requestResult);
 }
 
-function listenPort (app, port) {
+function listenPort (port) {
     return new Promise((resolve, reject) => {
-        app.listen(port, (err) => {
+        server = http.createServer(app);
+        server.listen(port, (err) => {
             if (err) {
                 reject(err);
             } else {
@@ -85,6 +88,12 @@ function listenPort (app, port) {
     });
 }
 
+async function closeServer () {
+    await server.close();
+}
+
 module.exports = {
-    configure: configureRouting
+    configure: configureRouting,
+    closeServer: closeServer,
+    app: app
 };
