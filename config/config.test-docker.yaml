@@ -7,7 +7,7 @@ db:
   minConnections: 1
   maxConnections: 20
 http:
-  port: 8080
+  port: 8082
 jwt:
   expiresIn: 10d
   secret: jhprouwy7345ythfeldgjae3h4utqhkuqwi4t73y4uthq3i4utyi7hkgakeuh4it73h4iq
