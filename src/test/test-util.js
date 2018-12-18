@@ -17,7 +17,7 @@ const DEFAULT_ACCOUNT = {
     name: 'Name'
 };
 
-async function request (method, url, body, login, expectedStatusCode, expectedErrorCode) {
+async function request (method, url, body, expectedStatusCode, expectedErrorCode, login) {
     const jwtToken = await getJwtTokenForLogin(login);
     const requestResult = await preparePromise(method, url, body, jwtToken);
     verifyCodes(requestResult, expectedStatusCode, expectedErrorCode);
@@ -66,20 +66,20 @@ function verifyCodes (result, expectedStatusCode, expectedErrorCode) {
     expect(result.body.message).to.be.a('string');
 }
 
-async function getRequest (url, login, expectedStatusCode, expectedErrorCode) {
-    return request('get', url, null, login, expectedStatusCode, expectedErrorCode);
+async function getRequest (url, expectedStatusCode, expectedErrorCode, login) {
+    return request('get', url, null, expectedStatusCode, expectedErrorCode, login);
 }
 
-async function postRequest (url, body, login, expectedStatusCode, expectedErrorCode) {
-    return request('post', url, body, login, expectedStatusCode, expectedErrorCode);
+async function postRequest (url, body, expectedStatusCode, expectedErrorCode, login) {
+    return request('post', url, body, expectedStatusCode, expectedErrorCode, login);
 }
 
-async function putRequest (url, body, login, expectedStatusCode, expectedErrorCode) {
-    return request('put', url, body, login, expectedStatusCode, expectedErrorCode);
+async function putRequest (url, body, expectedStatusCode, expectedErrorCode, login) {
+    return request('put', url, body, expectedStatusCode, expectedErrorCode, login);
 }
 
-async function deleteRequest (url, login, expectedStatusCode, expectedErrorCode) {
-    return request('delete', url, null, login, expectedStatusCode, expectedErrorCode);
+async function deleteRequest (url, expectedStatusCode, expectedErrorCode, login) {
+    return request('delete', url, null, expectedStatusCode, expectedErrorCode, login);
 }
 
 module.exports = {
