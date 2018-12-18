@@ -7,7 +7,7 @@
     "start": "node index.js",
     "start-monit": "nodemon index.js",
     "start-prod": "NODE_ENV=prod node index.js",
-    "test": "mocha src/test/*.js"
+    "test": "mocha src/test/*-test.js"
   },
   "repository": {
     "type": "git",
