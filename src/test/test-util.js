@@ -30,7 +30,7 @@ async function getJwtTokenForLogin (login) {
     }
 
     const actualLogin = login || DEFAULT_ACCOUNT.login;
-    const account = accountDao.getAccountByLogin(db, actualLogin);
+    const account = await accountDao.getAccountByLogin(db, actualLogin);
 
     if (!account) {
         log.warn('Account does not exist for login', actualLogin);
@@ -48,7 +48,7 @@ function preparePromise (method, url, body, jwtToken) {
     }
 
     if (jwtToken) {
-        promise = promise.setHeader('Authorization', 'Bearer ' + jwtToken);
+        promise = promise.set('Authorization', 'Bearer ' + jwtToken);
     }
 
     return promise;

@@ -6,7 +6,13 @@ const { getRequest, postRequest, putRequest, defaultAccount } = require('./test-
 
 describe('Account REST API testing', () => {
     describe('Get account end point testing', () => {
-        // todo
+        it('should get currently authenticated account', async () => {
+            const { body } = await getRequest('/account');
+
+            expect(body.id).to.be.a('number');
+            expect(body.login).to.equal(defaultAccount.login);
+            expect(body.name).to.equal(defaultAccount.name);
+        });
     });
 
     describe('Register account end point testing', () => {
