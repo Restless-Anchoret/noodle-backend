@@ -23,12 +23,28 @@ describe('Account REST API testing', () => {
                 login: defaultAccount.login,
                 password: defaultAccount.password
             };
-            const result = await postRequest('/account/sign-in', requestBody, null);
+            const { body } = await postRequest('/account/sign-in', requestBody, null);
 
-            expect(result.body.token).to.be.a('string');
-            expect(result.body.account.id).to.be.a('number');
-            expect(result.body.account.login).to.equal(defaultAccount.login);
-            expect(result.body.account.name).to.equal(defaultAccount.name);
+            expect(body.token).to.be.a('string');
+            expect(body.account.id).to.be.a('number');
+            expect(body.account.login).to.equal(defaultAccount.login);
+            expect(body.account.name).to.equal(defaultAccount.name);
+        });
+
+        it('should fail when password is incorrect', async () => {
+            const requestBody = {
+                login: defaultAccount.login,
+                password: defaultAccount.password + '456'
+            };
+            await postRequest('/account/sign-in', requestBody, null, 401, 4);
+        });
+
+        it('should fail when login does not exist', async () => {
+            const requestBody = {
+                login: defaultAccount.login + '-suffix',
+                password: defaultAccount.password
+            };
+            await postRequest('/account/sign-in', requestBody, null, 401, 4);
         });
     });
 });
