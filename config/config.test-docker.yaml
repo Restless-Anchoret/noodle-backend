@@ -1,6 +1,6 @@
 db:
   host: noodle-pg-test
-  port: 5433
+  port: 5432
   database: noodle-test
   user: user
   password: password
