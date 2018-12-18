@@ -1,0 +1,16 @@
+version: '3.6'
+services:
+
+  noodle-pg-test:
+    container_name: noodle-pg-test
+    image: postgres:9.6.5
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+      POSTGRES_DB: noodle-test
+
+networks:
+  default:
+    name: noodle-test-network
