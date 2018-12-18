@@ -16,7 +16,38 @@ describe('Account REST API testing', () => {
     });
 
     describe('Register account end point testing', () => {
-        // todo
+        it('should register account successfully', async () => {
+            const requestBody = {
+                login: 'new-login',
+                password: 'new-password123',
+                name: 'New Name'
+            };
+            const { body } = await postRequest('/account', requestBody, 201, null, null);
+
+            expect(body.token).to.be.a('string');
+            expect(body.account.id).to.be.a('number');
+            expect(body.account.login).to.equal(requestBody.login);
+            expect(body.account.name).to.equal(requestBody.name);
+            await verifySignIn(requestBody.login, requestBody.password, requestBody.name);
+        });
+
+        it('should fail when login is already used', async () => {
+            const requestBody = {
+                login: defaultAccount.login,
+                password: 'new-password123',
+                name: 'New Name'
+            };
+            await postRequest('/account', requestBody, 400, 2, null);
+        });
+
+        it('should fail when password is weak', async () => {
+            const requestBody = {
+                login: 'new-login',
+                password: 'new-password',
+                name: 'New Name'
+            };
+            await postRequest('/account', requestBody, 400, 1, null);
+        });
     });
 
     describe('Update account end point testing', () => {
@@ -27,7 +58,7 @@ describe('Account REST API testing', () => {
             expect(body.id).to.be.a('number');
             expect(body.login).to.equal(defaultAccount.login);
             expect(body.name).to.equal(requestBody.name);
-            await verifySignIn(defaultAccount.password, requestBody.name);
+            await verifySignIn(defaultAccount.login, defaultAccount.password, requestBody.name);
         });
 
         it('should update account password successfully', async () => {
@@ -40,7 +71,7 @@ describe('Account REST API testing', () => {
             expect(body.id).to.be.a('number');
             expect(body.login).to.equal(defaultAccount.login);
             expect(body.name).to.equal(defaultAccount.name);
-            await verifySignIn(requestBody.newPassword, defaultAccount.name);
+            await verifySignIn(defaultAccount.login, requestBody.newPassword, defaultAccount.name);
         });
 
         it('should fail when old password is incorrect', async () => {
@@ -51,28 +82,18 @@ describe('Account REST API testing', () => {
             await putRequest('/account', requestBody, 403, 5);
         });
 
-        async function verifySignIn (password, name) {
+        it('should fail when new password is weak', async () => {
             const requestBody = {
-                login: defaultAccount.login,
-                password: password
+                oldPassword: defaultAccount.password,
+                newPassword: 'password'
             };
-            const { body } = await postRequest('/account/sign-in', requestBody, 200, null, null);
-            expect(body.account.name).to.equal(name);
-        }
+            await putRequest('/account', requestBody, 400, 1);
+        });
     });
 
     describe('Sign in end point testing', () => {
         it('should sign in successfully when account exists', async () => {
-            const requestBody = {
-                login: defaultAccount.login,
-                password: defaultAccount.password
-            };
-            const { body } = await postRequest('/account/sign-in', requestBody, 200, null, null);
-
-            expect(body.token).to.be.a('string');
-            expect(body.account.id).to.be.a('number');
-            expect(body.account.login).to.equal(defaultAccount.login);
-            expect(body.account.name).to.equal(defaultAccount.name);
+            await verifySignIn(defaultAccount.login, defaultAccount.password, defaultAccount.name);
         });
 
         it('should fail when password is incorrect', async () => {
@@ -91,4 +112,17 @@ describe('Account REST API testing', () => {
             await postRequest('/account/sign-in', requestBody, 401, 4, null);
         });
     });
+
+    async function verifySignIn (login, password, name) {
+        const requestBody = {
+            login: login,
+            password: password
+        };
+        const { body } = await postRequest('/account/sign-in', requestBody, 200, null, null);
+
+        expect(body.token).to.be.a('string');
+        expect(body.account.id).to.be.a('number');
+        expect(body.account.login).to.equal(login);
+        expect(body.account.name).to.equal(name);
+    }
 });
