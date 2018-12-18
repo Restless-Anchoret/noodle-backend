@@ -71,13 +71,13 @@ class IncorrectLoginPasswordError extends UnauthorizedError {
 
 class IncorrectOldPasswordError extends ForbiddenError {
     constructor () {
-        super('IncorrectOldPasswordError', 'Incorrect old password.', 4);
+        super('IncorrectOldPasswordError', 'Incorrect old password.', 5);
     }
 }
 
 class ResourceNotFoundError extends NotFoundError {
     constructor () {
-        super('ResourceNotFoundError', 'Resource not found.', 5);
+        super('ResourceNotFoundError', 'Resource not found.', 6);
     }
 }
 
